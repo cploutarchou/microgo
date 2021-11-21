@@ -13,3 +13,17 @@ func (r *Rapiditas) CreateDirIfNotExist(path string) error {
 	}
 	return nil
 }
+
+func (r *Rapiditas) CreateFileIfNotExists(fileName string) error {
+	_, err := os.Stat(fileName)
+	if os.IsNotExist(err) {
+		file, err := os.Create(fileName)
+		if err != nil {
+			return err
+		}
+		defer func(file *os.File) {
+			_ = file.Close()
+		}(file)
+	}
+	return nil
+}

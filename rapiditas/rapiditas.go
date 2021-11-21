@@ -1,6 +1,9 @@
 package rapiditas
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/joho/godotenv"
+)
 
 const (
 	version = "1.0.0"
@@ -21,6 +24,16 @@ func (r *Rapiditas) New(rootPath string) error {
 	if err != nil {
 		return err
 	}
+
+	err = r.checkENV(rootPath)
+	if err != nil {
+		return err
+	}
+	// Read environment file
+	err = godotenv.Load(rootPath + "/.env")
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -33,6 +46,14 @@ func (r *Rapiditas) Init(p initPaths) error {
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (r *Rapiditas) checkENV(path string) error {
+	err := r.CreateFileIfNotExists(fmt.Sprintf("%s.env", path))
+	if err != nil {
+		return err
 	}
 	return nil
 }
