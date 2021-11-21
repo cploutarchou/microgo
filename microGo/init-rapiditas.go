@@ -14,17 +14,17 @@ func initApplication() *application {
 	}
 
 	// init rapiditas
-	cel := &rapiditas.Rapiditas{}
-	err = cel.New(path)
+	rap := &rapiditas.Rapiditas{}
+	err = rap.New(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cel.AppName = "myapp"
-	cel.Debug = true
+	rap.AppName = "myapp"
+	rap.InfoLog.Println("DEBUG mode is set to : ", rap.Debug)
 
 	app := &application{
-		App: cel,
+		App: rap,
 	}
 
 	return app
