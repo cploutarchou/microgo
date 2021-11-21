@@ -1,5 +1,7 @@
 package rapiditas
 
+import "fmt"
+
 const (
 	version = "1.0.0"
 )
@@ -23,9 +25,10 @@ func (r *Rapiditas) New(rootPath string) error {
 }
 
 func (r *Rapiditas) Init(p initPaths) error {
+	fmt.Print(version)
 	root := p.rootPath
 	for _, path := range p.foldersNames {
-		// create the directiory if it doesn't exist'
+		// create the directory if it doesn't exist'
 		err := r.CreateDirIfNotExist(root + "/" + path)
 		if err != nil {
 			return err
