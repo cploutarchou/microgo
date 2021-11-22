@@ -1,4 +1,4 @@
-package rapiditas
+package microGo
 
 import (
 	"fmt"
@@ -8,16 +8,16 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cploutarchou/rapiditas/render"
+	"github.com/cploutarchou/microGo/render"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 )
 
 const version = "1.0.0"
 
-// Rapiditas is the overall type for the Rapiditas package. Members that are exported in this type
+// MicroGo is the overall type for the MicroGo package. Members that are exported in this type
 // are available to any application that uses it.
-type Rapiditas struct {
+type MicroGo struct {
 	AppName    string
 	Debug      bool
 	Version    string
@@ -36,20 +36,20 @@ type config struct {
 	renderer string
 }
 
-// New reads the .env file, creates our application config, populates the Rapiditas type with settings
+// New reads the .env file, creates our application config, populates the MicroGo type with settings
 // based on .env values, and creates the necessary folders and files if they don't exist on the system.
-func (r *Rapiditas) New(rootPath string) error {
+func (m *MicroGo) New(rootPath string) error {
 	pathConfig := initPaths{
 		rootPath:    rootPath,
 		folderNames: []string{"handlers", "migrations", "views", "data", "public", "tmp", "logs", "middleware"},
 	}
 
-	err := r.Init(pathConfig)
+	err := m.Init(pathConfig)
 	if err != nil {
 		return err
 	}
 
-	err = r.checkDotEnv(rootPath)
+	err = m.checkDotEnv(rootPath)
 	if err != nil {
 		return err
 	}
@@ -61,32 +61,32 @@ func (r *Rapiditas) New(rootPath string) error {
 	}
 
 	// initiate the  loggers
-	infoLog, errorLog, warnLog, buildLog := r.startLoggers()
-	r.InfoLog = infoLog
-	r.ErrorLog = errorLog
-	r.WarningLog = warnLog
-	r.BuildLog = buildLog
-	r.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
-	r.Version = version
-	r.RootPath = rootPath
-	r.Routes = r.routes().(*chi.Mux)
+	infoLog, errorLog, warnLog, buildLog := m.startLoggers()
+	m.InfoLog = infoLog
+	m.ErrorLog = errorLog
+	m.WarningLog = warnLog
+	m.BuildLog = buildLog
+	m.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
+	m.Version = version
+	m.RootPath = rootPath
+	m.Routes = m.routes().(*chi.Mux)
 
-	r.config = config{
+	m.config = config{
 		port:     os.Getenv("PORT"),
 		renderer: os.Getenv("RENDERER"),
 	}
 
-	r.createRenderer()
+	m.createRenderer()
 
 	return nil
 }
 
-// Init creates the necessary folders for Rapiditas application
-func (r *Rapiditas) Init(p initPaths) error {
+// Init creates the necessary folders for MicroGo application
+func (m *MicroGo) Init(p initPaths) error {
 	root := p.rootPath
 	for _, path := range p.folderNames {
 		// create folder if it doesn't exist
-		err := r.CreateDirIfNotExist(root + "/" + path)
+		err := m.CreateDirIfNotExist(root + "/" + path)
 		if err != nil {
 			return err
 		}
@@ -95,31 +95,31 @@ func (r *Rapiditas) Init(p initPaths) error {
 }
 
 // ListenAndServe starts the application web server
-func (r *Rapiditas) ListenAndServe() {
+func (m *MicroGo) ListenAndServe() {
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", os.Getenv("PORT")),
-		ErrorLog:     r.ErrorLog,
-		Handler:      r.Routes,
+		ErrorLog:     m.ErrorLog,
+		Handler:      m.Routes,
 		IdleTimeout:  30 * time.Second,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 600 * time.Second,
 	}
 
-	r.InfoLog.Printf("Listening on port %s", os.Getenv("PORT"))
+	m.InfoLog.Printf("Listening on port %s", os.Getenv("PORT"))
 	err := srv.ListenAndServe()
-	r.ErrorLog.Fatal(err)
+	m.ErrorLog.Fatal(err)
 }
 
-func (r *Rapiditas) checkDotEnv(path string) error {
-	err := r.CreateFileIfNotExists(fmt.Sprintf("%s/.env", path))
+func (m *MicroGo) checkDotEnv(path string) error {
+	err := m.CreateFileIfNotExists(fmt.Sprintf("%s/.env", path))
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-//startLoggers Initializes all loggers for rapiditas application.
-func (r *Rapiditas) startLoggers() (*log.Logger, *log.Logger, *log.Logger, *log.Logger) {
+//startLoggers Initializes all loggers for microGo application.
+func (m *MicroGo) startLoggers() (*log.Logger, *log.Logger, *log.Logger, *log.Logger) {
 	var infoLog *log.Logger
 	var errorLog *log.Logger
 	var warnLog *log.Logger
@@ -131,12 +131,12 @@ func (r *Rapiditas) startLoggers() (*log.Logger, *log.Logger, *log.Logger, *log.
 	return infoLog, errorLog, warnLog, buildLog
 }
 
-//createRenderer Create a Renderer for rapiditas application.
-func (r *Rapiditas) createRenderer() {
+//createRenderer Create a Renderer for microGo application.
+func (m *MicroGo) createRenderer() {
 	renderer := render.Render{
-		Renderer: r.config.renderer,
-		RootPath: r.RootPath,
-		Port:     r.config.port,
+		Renderer: m.config.renderer,
+		RootPath: m.RootPath,
+		Port:     m.config.port,
 	}
-	r.Render = &renderer
+	m.Render = &renderer
 }

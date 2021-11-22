@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"github.com/cploutarchou/rapiditas"
+	"github.com/cploutarchou/microGo"
 	"net/http"
 )
 
 type Handlers struct {
-	APP *rapiditas.Rapiditas
+	APP *microGo.MicroGo
 }
 
 // Home Request Handler for home package.

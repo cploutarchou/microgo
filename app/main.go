@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/cploutarchou/rapiditas"
-	"microGo/handlers"
+	"app/handlers"
+	"github.com/cploutarchou/microGo"
 )
 
 type application struct {
-	App      *rapiditas.Rapiditas
+	App      *microGo.MicroGo
 	Handlers *handlers.Handlers
 }
 

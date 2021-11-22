@@ -1,15 +1,15 @@
-BINARY_NAME=rapiditasApp
+BINARY_NAME=microGoApp
 
 build:
 	@go mod vendor
-	@echo "Building Rapiditas..."
+	@echo "Building microGo..."
 	@go build -o tmp/${BINARY_NAME} .
-	@echo "Rapiditas built!"
+	@echo "microGo built!"
 
 run: build
-	@echo "Starting Rapiditas..."
+	@echo "Starting microGo..."
 	@./tmp/${BINARY_NAME} &
-	@echo "Rapiditas started!"
+	@echo "microGo started!"
 
 clean:
 	@echo "Cleaning..."
@@ -25,8 +25,8 @@ test:
 start: run
 
 stop:
-	@echo "Stopping Rapiditas..."
+	@echo "Stopping microGo..."
 	@-pkill -SIGTERM -f "./tmp/${BINARY_NAME}"
-	@echo "Stopped Rapiditas!"
+	@echo "Stopped microGo!"
 
 restart: stop start

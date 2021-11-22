@@ -1,20 +1,21 @@
-package main
+package microGo
 
 import (
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"net/http"
 )
 
-//routes The application routes.
-func (a *application) routes() *chi.Mux {
-	// Note : All the middlewares must come before the routes
+//routes Return a Mux object that implements the Router interface.
+func (m *MicroGo) routes() http.Handler {
+	mux := chi.NewRouter()
+	mux.Use(middleware.RequestID)
+	mux.Use(middleware.RealIP)
+	if m.Debug {
+		mux.Use(middleware.Logger)
+	}
 
-	// Add routes here
-	a.App.Routes.Get("/", a.Handlers.Home)
+	mux.Use(middleware.Recoverer)
 
-	// Routes for static files.
-	fileServer := http.FileServer(http.Dir("./public"))
-	a.App.Routes.Handle("/public/*", http.StripPrefix("/public", fileServer))
-
-	return a.App.Routes
+	return mux
 }

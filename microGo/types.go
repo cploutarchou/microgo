@@ -1,4 +1,4 @@
-package rapiditas
+package microGo
 
 type initPaths struct {
 	rootPath    string
