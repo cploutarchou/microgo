@@ -145,7 +145,7 @@ func (m *MicroGo) createRenderer() {
 		Renderer: m.config.renderer,
 		RootPath: m.RootPath,
 		Port:     m.config.port,
-		JetView:  m.JetView,
+		JetViews: m.JetView,
 	}
 	m.Render = &renderer
 }

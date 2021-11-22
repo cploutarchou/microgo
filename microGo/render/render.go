@@ -15,7 +15,7 @@ type Render struct {
 	Secure     bool
 	Port       string
 	ServerName string
-	JetView    *jet.Set
+	JetViews   *jet.Set
 }
 
 type TemplateData struct {
@@ -72,7 +72,7 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 	if data != nil {
 		td = data.(*TemplateData)
 	}
-	t, err := r.JetView.GetTemplate(fmt.Sprintf("%s.jet", view))
+	t, err := r.JetViews.GetTemplate(fmt.Sprintf("%s.jet", view))
 	if err != nil {
 		log.Println(err)
 		return err
