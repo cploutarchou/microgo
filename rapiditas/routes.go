@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+//routes Return a Mux object that implements the Router interface.
 func (r *Rapiditas) routes() http.Handler {
 	mux := chi.NewRouter()
 	mux.Use(middleware.RequestID)
@@ -15,5 +16,6 @@ func (r *Rapiditas) routes() http.Handler {
 	}
 
 	mux.Use(middleware.Recoverer)
+
 	return mux
 }

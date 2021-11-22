@@ -19,7 +19,7 @@ type TemplateData struct {
 	IsAuthenticated bool
 	IntMap          map[string]int
 	StringMap       map[string]string
-	FloatMap        map[float64]float64
+	FloatMap        map[string]float64
 	Data            map[string]interface{}
 	CSRFToken       string
 	Port            string
@@ -27,15 +27,18 @@ type TemplateData struct {
 	Secure          bool
 }
 
-func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view string, variable, data interface{}) error {
+// Page The page render function. You can use it to render pages using go or jet templates.
+func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view string, variables, data interface{}) error {
 	switch strings.ToLower(r.Renderer) {
 	case "go":
 		return r.GoPage(writer, request, view, data)
 	case "jet":
+		return nil
 	}
 	return nil
 }
 
+// GoPage The go template renderer function.
 func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view string, data interface{}) error {
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/views/%s.page.tmpl", r.RootPath, view))
 	if err != nil {

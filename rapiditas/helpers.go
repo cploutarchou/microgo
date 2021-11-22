@@ -2,8 +2,8 @@ package rapiditas
 
 import "os"
 
+// CreateDirIfNotExist  creates the necessary folder if not exist.
 func (r *Rapiditas) CreateDirIfNotExist(path string) error {
-
 	const mode = 0755
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		err := os.Mkdir(path, mode)
@@ -14,10 +14,11 @@ func (r *Rapiditas) CreateDirIfNotExist(path string) error {
 	return nil
 }
 
-func (r *Rapiditas) CreateFileIfNotExists(fileName string) error {
-	_, err := os.Stat(fileName)
+// CreateFileIfNotExists  creates the necessary files if not exist.
+func (r *Rapiditas) CreateFileIfNotExists(path string) error {
+	var _, err = os.Stat(path)
 	if os.IsNotExist(err) {
-		file, err := os.Create(fileName)
+		var file, err = os.Create(path)
 		if err != nil {
 			return err
 		}

@@ -1,12 +1,16 @@
 package main
 
-import "github.com/cploutarchou/rapiditas"
+import (
+	"github.com/cploutarchou/rapiditas"
+	"microGo/handlers"
+)
 
 type application struct {
-	App *rapiditas.Rapiditas
+	App      *rapiditas.Rapiditas
+	Handlers *handlers.Handlers
 }
 
 func main() {
-	r := initApplication()
-	r.App.ListenEndServe()
+	c := initApplication()
+	c.App.ListenAndServe()
 }
