@@ -2,6 +2,7 @@ package microGo
 
 import (
 	"fmt"
+	"github.com/CloudyKit/jet/v6"
 	"log"
 	"net/http"
 	"os"
@@ -28,6 +29,7 @@ type MicroGo struct {
 	RootPath   string
 	Routes     *chi.Mux
 	Render     *render.Render
+	JetView    *jet.Set
 	config     config
 }
 
@@ -76,6 +78,12 @@ func (m *MicroGo) New(rootPath string) error {
 		renderer: os.Getenv("RENDERER"),
 	}
 
+	var views = jet.NewSet(
+		jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", rootPath)),
+		jet.InDevelopmentMode(),
+	)
+
+	m.JetView = views
 	m.createRenderer()
 
 	return nil
@@ -137,6 +145,7 @@ func (m *MicroGo) createRenderer() {
 		Renderer: m.config.renderer,
 		RootPath: m.RootPath,
 		Port:     m.config.port,
+		JetViews: m.JetView,
 	}
 	m.Render = &renderer
 }
