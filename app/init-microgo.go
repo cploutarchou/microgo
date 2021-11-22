@@ -1,10 +1,10 @@
 package main
 
 import (
+	"app/handlers"
+	"github.com/cploutarchou/microGo"
 	"log"
 	"os"
-
-	"github.com/cploutarchou/rapiditas"
 )
 
 func initApplication() *application {
@@ -13,19 +13,23 @@ func initApplication() *application {
 		log.Fatal(err)
 	}
 
-	// init rapiditas
-	rap := &rapiditas.Rapiditas{}
+	// init microGo
+	rap := &microGo.MicroGo{}
 	err = rap.New(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	rap.AppName = "myapp"
-	rap.InfoLog.Println("DEBUG mode is set to : ", rap.Debug)
+	rap.AppName = "app"
+	addHandlers := &handlers.Handlers{
+		APP: rap,
+	}
 
 	app := &application{
-		App: rap,
+		App:      rap,
+		Handlers: addHandlers,
 	}
+	app.App.Routes = app.routes()
 
 	return app
 }
