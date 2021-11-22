@@ -21,6 +21,12 @@ type Rapiditas struct {
 	WarningLog *log.Logger
 	BuildLog   *log.Logger
 	RootPath   string
+	config     config
+}
+
+type config struct {
+	port     string
+	rendered string
 }
 
 func (r *Rapiditas) New(rootPath string) error {
@@ -48,6 +54,12 @@ func (r *Rapiditas) New(rootPath string) error {
 	r.ErrorLog = errorLog
 	r.WarningLog = warnLog
 	r.BuildLog = buildLog
+	r.RootPath = rootPath
+
+	r.config = config{
+		port:     os.Getenv("PORT"),
+		rendered: os.Getenv("RENDERER"),
+	}
 
 	r.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	r.Version = version
