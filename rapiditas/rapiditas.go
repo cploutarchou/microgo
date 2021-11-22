@@ -2,6 +2,7 @@ package rapiditas
 
 import (
 	"fmt"
+	"github.com/cploutarchou/rapiditas/render"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"log"
@@ -25,6 +26,7 @@ type Rapiditas struct {
 	BuildLog   *log.Logger
 	RootPath   string
 	Routes     *chi.Mux
+	Render     *render.Render
 	config     config
 }
 
@@ -66,6 +68,7 @@ func (r *Rapiditas) New(rootPath string) error {
 		rendered: os.Getenv("RENDERER"),
 	}
 
+	r.Render = r.createRenderer(r)
 	r.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	r.Version = version
 	return nil
@@ -117,4 +120,14 @@ func (r *Rapiditas) startLogger() (*log.Logger, *log.Logger, *log.Logger, *log.L
 	buildLog = log.New(os.Stderr, "[ BUILD ] ", log.Ldate|log.Ltime|log.Lshortfile)
 	errorLog = log.New(os.Stderr, "[ ERROR ] ", log.Ldate|log.Ltime|log.Lshortfile)
 	return infoLog, errorLog, warnLog, buildLog
+}
+
+func (r *Rapiditas) createRenderer(rap *Rapiditas) *render.Render {
+
+	rendered := render.Render{
+		Renderer: rap.config.rendered,
+		RootPath: rap.RootPath,
+		Port:     rap.config.port,
+	}
+	return &rendered
 }
