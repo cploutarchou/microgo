@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/cploutarchou/rapiditas"
+	"app/handlers"
+	"github.com/cploutarchou/microGo"
 	"log"
-	"microGo/handlers"
 	"os"
 )
 
@@ -13,21 +13,21 @@ func initApplication() *application {
 		log.Fatal(err)
 	}
 
-	// init rapiditas
-	rap := &rapiditas.Rapiditas{}
+	// init microGo
+	rap := &microGo.MicroGo{}
 	err = rap.New(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	rap.AppName = "app"
-	add_handlers := &handlers.Handlers{
+	addHandlers := &handlers.Handlers{
 		APP: rap,
 	}
 
 	app := &application{
 		App:      rap,
-		Handlers: add_handlers,
+		Handlers: addHandlers,
 	}
 	app.App.Routes = app.routes()
 
