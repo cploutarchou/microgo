@@ -7,7 +7,7 @@ build:
 	@echo "Rapiditas built!"
 
 run: build
-	@echo "Starting rapiditas..."
+	@echo "Starting Rapiditas..."
 	@./tmp/${BINARY_NAME} &
 	@echo "Rapiditas started!"
 
@@ -25,7 +25,7 @@ test:
 start: run
 
 stop:
-	@echo "Stopping rapiditas..."
+	@echo "Stopping Rapiditas..."
 	@-pkill -SIGTERM -f "./tmp/${BINARY_NAME}"
 	@echo "Stopped Rapiditas!"
 
