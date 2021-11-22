@@ -2,10 +2,13 @@ package rapiditas
 
 import (
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 const (
@@ -21,6 +24,7 @@ type Rapiditas struct {
 	WarningLog *log.Logger
 	BuildLog   *log.Logger
 	RootPath   string
+	Routes     *chi.Mux
 	config     config
 }
 
@@ -55,6 +59,7 @@ func (r *Rapiditas) New(rootPath string) error {
 	r.WarningLog = warnLog
 	r.BuildLog = buildLog
 	r.RootPath = rootPath
+	r.Routes = r.routes().(*chi.Mux)
 
 	r.config = config{
 		port:     os.Getenv("PORT"),
@@ -78,6 +83,21 @@ func (r *Rapiditas) Init(p initPaths) error {
 	return nil
 }
 
+// ListenEndServe  Starting the web server.
+func (r *Rapiditas) ListenEndServe() {
+	svr := &http.Server{
+		Addr:         fmt.Sprintf(":%s", os.Getenv("PORT")),
+		ErrorLog:     r.ErrorLog,
+		Handler:      r.routes(),
+		IdleTimeout:  30 * time.Second,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 600 * time.Second,
+	}
+	r.InfoLog.Printf("Listening on %s", os.Getenv("PORT"))
+	err := svr.ListenAndServe()
+	r.ErrorLog.Fatal(err)
+
+}
 func (r *Rapiditas) checkENV(path string) error {
 	err := r.CreateFileIfNotExists(fmt.Sprintf("%s.env", path))
 	if err != nil {
