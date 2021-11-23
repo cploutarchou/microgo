@@ -6,38 +6,54 @@ import (
 	"testing"
 )
 
+var templateTests = []struct {
+	name          string
+	renderer      string
+	template      string
+	errorExpected bool
+	errorMSG      string
+}{
+	{"goTemplate", "go", "home",
+		false, "Unable to render go template.",
+	},
+	{"goTemplateNoTemplate", "go", "not-exists",
+		true, "Something went wrong. Unable to render a not existing go template.",
+	},
+	{"jetTemplate", "jet", "home",
+		false, "Unable to render jet template.",
+	},
+	{"jetTemplateNoTemplate", "jet", "not-exists",
+		true, "Something went wrong. Unable to render a not existing jet template.",
+	},
+	{"invalidRenderEngine", "foo", "home",
+		true, "No error while trying to render template with no valid engine.",
+	},
+}
+
 func TestRenderPage(t *testing.T) {
 
-	r, err := http.NewRequest("GET", "/test/render", nil)
-	if err != nil {
-		t.Error(err)
-	}
-	w := httptest.NewRecorder()
+	for _, task := range templateTests {
+		r, err := http.NewRequest("GET", "/test/render", nil)
+		if err != nil {
+			t.Error(err)
+		}
+		w := httptest.NewRecorder()
 
-	testRenderer.Renderer = "go"
-	testRenderer.RootPath = "./test"
-	err = testRenderer.Page(w, r, "home", nil, nil)
-	if err != nil {
-		t.Error("Unable to render template. ", err)
-	}
+		testRenderer.Renderer = task.renderer
+		testRenderer.RootPath = "./test"
+		err = testRenderer.Page(w, r, task.template, nil, nil)
 
-	err = testRenderer.Page(w, r, "not-exist", nil, nil)
-	if err == nil {
-		t.Error("Something went wrong. Unable to render a not existing template.", err)
-	}
-	testRenderer.Renderer = "jet"
-	err = testRenderer.Page(w, r, "home", nil, nil)
-	if err != nil {
-		t.Error("Unable to render template. ", err)
-	}
-	err = testRenderer.Page(w, r, "not-exist", nil, nil)
-	if err == nil {
-		t.Error("Something went wrong. Unable to render a not existing  jet template.", err)
-	}
-	testRenderer.Renderer = ""
-	err = testRenderer.Page(w, r, "home", nil, nil)
-	if err == nil {
-		t.Error("No error while trying to render template with no valid engine. ", err)
+		if task.errorExpected {
+			if err == nil {
+				t.Errorf("%s: %s:", task.errorMSG, err.Error())
+
+			}
+		} else {
+			if err != nil {
+				t.Errorf("%s: %s: %s:", task.name, task.errorMSG, err.Error())
+			}
+		}
+
 	}
 
 }
