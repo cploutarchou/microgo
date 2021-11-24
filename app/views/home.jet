@@ -1,0 +1,29 @@
+{{extends "./layouts/base.jet"}}
+{{block browserTitle()}}Test Jet Engine{{end}}
+{{block css()}}
+{{end}}
+{{block pageContent()}}
+
+    <div class="col text-center">
+        <div class="d-flex align-items-center justify-content-center mt-5">
+            <div>
+                <h1>Test</h1>
+                <img src="/public/images/goLogo.svg" class="mb-5" style="width: 200px;height:auto;">
+                <h1>microGo (A Jet Templates)</h1>
+                <hr>
+                <small class="alert alert-info">Go build something awesome</small>
+            </div>
+        </div>
+        <hr>
+        <p>Thinks to try:</p>
+        <div class="list-group">
+            <a href="/go-page" class="list-group-item list-group-item-action">Render a Go Template</a>
+            <a href="/jet-page" class="list-group-item list-group-item-action">Render a Jet Template</a>
+            <a href="/sessions" class="list-group-item list-group-item-action">Try Session</a>
+            <a href="/" class="list-group-item list-group-item-action btn ">Go Back</a>
+        </div>
+    </div>
+
+{{end}}
+{{block js()}}
+{{end}}
