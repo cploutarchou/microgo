@@ -17,5 +17,7 @@ func (m *MicroGo) routes() http.Handler {
 
 	mux.Use(middleware.Recoverer)
 
+	mux.Use(m.LoadSessions)
+
 	return mux
 }

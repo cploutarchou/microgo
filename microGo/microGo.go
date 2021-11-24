@@ -3,15 +3,16 @@ package microGo
 import (
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
+	"github.com/alexedwards/scs/v2"
+	"github.com/cploutarchou/microGo/render"
+	"github.com/cploutarchou/microGo/session"
+	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
-
-	"github.com/cploutarchou/microGo/render"
-	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 )
 
 const version = "1.0.0"
@@ -31,11 +32,14 @@ type MicroGo struct {
 	Render     *render.Render
 	JetView    *jet.Set
 	config     config
+	Session    *scs.SessionManager
 }
 
 type config struct {
-	port     string
-	renderer string
+	port        string
+	renderer    string
+	cookie      cookieConfig
+	sessionType string
 }
 
 // New reads the .env file, creates our application config, populates the MicroGo type with settings
@@ -76,7 +80,24 @@ func (m *MicroGo) New(rootPath string) error {
 	m.config = config{
 		port:     os.Getenv("PORT"),
 		renderer: os.Getenv("RENDERER"),
+		cookie: cookieConfig{
+			name:     os.Getenv("COOKIE_NAME"),
+			lifetime: os.Getenv("COOKIE_LIFETIME"),
+			persist:  os.Getenv("COOKIE_PERSISTS"),
+			secure:   os.Getenv("COOKIE_SECURE"),
+			domain:   os.Getenv("COOKIE_DOMAIN"),
+		},
+		sessionType: os.Getenv("SESSION_TYPE"),
 	}
+	// initiate session
+	_session := session.Session{
+		CookieLifetime: m.config.cookie.lifetime,
+		CookiePersist:  m.config.cookie.persist,
+		CookieName:     m.config.cookie.name,
+		SessionType:    m.config.sessionType,
+		CookieDomain:   m.config.cookie.domain,
+	}
+	m.Session = _session.InitializeSession()
 
 	var views = jet.NewSet(
 		jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", rootPath)),
