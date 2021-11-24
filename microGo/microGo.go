@@ -85,6 +85,7 @@ func (m *MicroGo) New(rootPath string) error {
 			lifetime: os.Getenv("COOKIE_LIFETIME"),
 			persist:  os.Getenv("COOKIE_PERSISTS"),
 			secure:   os.Getenv("COOKIE_SECURE"),
+			domain:   os.Getenv("COOKIE_DOMAIN"),
 		},
 		sessionType: os.Getenv("SESSION_TYPE"),
 	}
@@ -94,6 +95,7 @@ func (m *MicroGo) New(rootPath string) error {
 		CookiePersist:  m.config.cookie.persist,
 		CookieName:     m.config.cookie.name,
 		SessionType:    m.config.sessionType,
+		CookieDomain:   m.config.cookie.domain,
 	}
 	m.Session = _session.InitializeSession()
 
