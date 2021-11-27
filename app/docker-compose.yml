@@ -1,8 +1,6 @@
 version: '3'
 
 services:
-
-  #  start Postgres, and ensure that data is stored to a mounted volume
   postgres:
     image: 'postgres'
     ports:
@@ -13,14 +11,12 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: microGo
 
-  #  start Redis, and ensure that data is stored to a mounted volume
   redis:
     image: 'redis:alpine'
     ports:
       - "6379:6379"
     restart: always
 
-  #  start MariaDB, and ensure that data is stored to a mounted volume
   mariadb:
     image: 'mariadb'
     ports:
