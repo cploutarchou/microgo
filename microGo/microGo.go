@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
-	"github.com/cploutarchou/microGo/microGo/render"
-	"github.com/cploutarchou/microGo/microGo/session"
+	"github.com/cploutarchou/microGo/render"
+	"github.com/cploutarchou/microGo/session"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"log"
@@ -192,7 +192,7 @@ func (m *MicroGo) BuildDataSourceName() string {
 	switch os.Getenv("DATABASE_TYPE") {
 	case "mysql":
 	case "postgres", "postgresql":
-		dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode%s timezone %s connect_timeout=5",
+		dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s timezone=%s connect_timeout=5",
 			os.Getenv("DATABASE_HOST"),
 			os.Getenv("DATABASE_PORT"),
 			os.Getenv("DATABASE_USER"),
