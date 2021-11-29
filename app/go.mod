@@ -9,6 +9,7 @@ require (
 	github.com/cploutarchou/microGo v0.0.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/upper/db/v4 v4.2.1
+	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871
 )
 
 require (
@@ -25,6 +26,5 @@ require (
 	github.com/jackc/pgx/v4 v4.14.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/lib/pq v1.10.4 // indirect
-	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
 	golang.org/x/text v0.3.6 // indirect
 )
