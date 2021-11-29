@@ -1,6 +1,7 @@
 package microGo
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
@@ -149,6 +150,13 @@ func (m *MicroGo) ListenAndServe() {
 		WriteTimeout: 600 * time.Second,
 	}
 
+	defer func(Pool *sql.DB) {
+		err := Pool.Close()
+		if err != nil {
+			m.ErrorLog.Println(err)
+			return
+		}
+	}(m.DB.Pool)
 	m.InfoLog.Printf("Listening on port %s", os.Getenv("PORT"))
 	err := srv.ListenAndServe()
 	m.ErrorLog.Fatal(err)
