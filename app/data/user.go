@@ -105,16 +105,16 @@ func (u *User) Delete(id User) error {
 }
 
 func (u *User) Insert(user User) (int, error) {
-	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), 16)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
 	if err != nil {
 		return 0, err
 	}
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 	user.Password = string(hashed)
+
 	collection := upper.Collection(u.Table())
 	res, err := collection.Insert(user)
-
 	if err != nil {
 		return 0, err
 	}

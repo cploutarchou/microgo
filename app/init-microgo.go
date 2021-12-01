@@ -1,6 +1,7 @@
 package main
 
 import (
+	"app/data"
 	"app/handlers"
 	"github.com/cploutarchou/microGo"
 	"log"
@@ -30,6 +31,7 @@ func initApplication() *application {
 		Handlers: addHandlers,
 	}
 	app.App.Routes = app.routes()
+	app.Models = data.New(app.App.DB.Pool)
 
 	return app
 }
