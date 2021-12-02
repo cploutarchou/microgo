@@ -190,6 +190,7 @@ func (m *MicroGo) createRenderer() {
 		RootPath: m.RootPath,
 		Port:     m.config.port,
 		JetViews: m.JetView,
+		Session:  m.Session,
 	}
 	m.Render = &renderer
 }
