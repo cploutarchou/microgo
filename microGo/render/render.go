@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
+	"github.com/alexedwards/scs/v2"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,6 +18,7 @@ type Render struct {
 	Port       string
 	ServerName string
 	JetViews   *jet.Set
+	Session    *scs.SessionManager
 }
 
 type TemplateData struct {
@@ -29,6 +31,16 @@ type TemplateData struct {
 	Port            string
 	ServerName      string
 	Secure          bool
+}
+
+func (r *Render) DefaultData(templateData *TemplateData, request *http.Request) *TemplateData {
+	templateData.Secure = r.Secure
+	templateData.ServerName = r.ServerName
+	templateData.Port = r.Port
+	if r.Session.Exists(request.Context(), "userID") {
+		templateData.IsAuthenticated = true
+	}
+	return templateData
 }
 
 // Page The page render function. You can use it to render pages using go or jet templates.
@@ -54,6 +66,7 @@ func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view 
 	if data != nil {
 		td = data.(*TemplateData)
 	}
+	td = r.DefaultData(td, request)
 	err = tmpl.Execute(writer, &td)
 	if err != nil {
 		return err
@@ -74,6 +87,8 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 	if data != nil {
 		td = data.(*TemplateData)
 	}
+
+	td = r.DefaultData(td, request)
 	t, err := r.JetViews.GetTemplate(fmt.Sprintf("%s.jet", view))
 	if err != nil {
 		log.Println(err)

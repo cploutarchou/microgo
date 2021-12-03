@@ -1,6 +1,7 @@
 package microGo
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
@@ -33,6 +34,7 @@ type MicroGo struct {
 	JetView    *jet.Set
 	config     config
 	Session    *scs.SessionManager
+	DB         Database
 }
 
 type config struct {
@@ -40,6 +42,7 @@ type config struct {
 	renderer    string
 	cookie      cookieConfig
 	sessionType string
+	database    databaseConfig
 }
 
 // New reads the .env file, creates our application config, populates the MicroGo type with settings
@@ -72,6 +75,19 @@ func (m *MicroGo) New(rootPath string) error {
 	m.ErrorLog = errorLog
 	m.WarningLog = warnLog
 	m.BuildLog = buildLog
+
+	// Database connection
+	if os.Getenv("DATABASE_TYPE") != "" {
+		db, err := m.OpenDB(os.Getenv("DATABASE_TYPE"), m.BuildDataSourceName())
+		if err != nil {
+			errorLog.Println(err)
+			os.Exit(1)
+		}
+		m.DB = Database{
+			DatabaseType: os.Getenv("DATABASE_TYPE"),
+			Pool:         db,
+		}
+	}
 	m.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	m.Version = version
 	m.RootPath = rootPath
@@ -134,6 +150,13 @@ func (m *MicroGo) ListenAndServe() {
 		WriteTimeout: 600 * time.Second,
 	}
 
+	defer func(Pool *sql.DB) {
+		err := Pool.Close()
+		if err != nil {
+			m.ErrorLog.Println(err)
+			return
+		}
+	}(m.DB.Pool)
 	m.InfoLog.Printf("Listening on port %s", os.Getenv("PORT"))
 	err := srv.ListenAndServe()
 	m.ErrorLog.Fatal(err)
@@ -167,6 +190,31 @@ func (m *MicroGo) createRenderer() {
 		RootPath: m.RootPath,
 		Port:     m.config.port,
 		JetViews: m.JetView,
+		Session:  m.Session,
 	}
 	m.Render = &renderer
+}
+
+func (m *MicroGo) BuildDataSourceName() string {
+	var dsn string
+
+	switch os.Getenv("DATABASE_TYPE") {
+	case "mysql":
+	case "postgres", "postgresql":
+		dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s timezone=%s connect_timeout=5",
+			os.Getenv("DATABASE_HOST"),
+			os.Getenv("DATABASE_PORT"),
+			os.Getenv("DATABASE_USER"),
+			os.Getenv("DATABASE_NAME"),
+			os.Getenv("DATABASE_SSL_MODE"),
+			os.Getenv("DATABASE_TIME_ZONE"),
+		)
+		if os.Getenv("DATABASE_PASS") != "" {
+			dsn = fmt.Sprintf("%s password=%s", dsn, os.Getenv("DATABASE_PASS"))
+		}
+
+	default:
+
+	}
+	return dsn
 }

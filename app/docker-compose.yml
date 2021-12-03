@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres'
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: microGo
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - "6379:6379"
+    restart: always
+
+  mariadb:
+    image: 'mariadb'
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: microGo
+      MYSQL_USER: mariadb
+      MYSQL_PASSWORD: password

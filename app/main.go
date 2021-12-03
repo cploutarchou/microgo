@@ -1,6 +1,7 @@
 package main
 
 import (
+	"app/data"
 	"app/handlers"
 	"github.com/cploutarchou/microGo"
 )
@@ -8,6 +9,7 @@ import (
 type application struct {
 	App      *microGo.MicroGo
 	Handlers *handlers.Handlers
+	Models   data.Models
 }
 
 func main() {
