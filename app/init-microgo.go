@@ -1,6 +1,7 @@
 package main
 
 import (
+	"app/data"
 	"app/handlers"
 	"github.com/cploutarchou/microGo"
 	"log"
@@ -21,15 +22,17 @@ func initApplication() *application {
 	}
 
 	rap.AppName = "app"
-	addHandlers := &handlers.Handlers{
+	appHandlers := &handlers.Handlers{
 		APP: rap,
 	}
 
 	app := &application{
 		App:      rap,
-		Handlers: addHandlers,
+		Handlers: appHandlers,
 	}
 	app.App.Routes = app.routes()
+	app.Models = data.New(app.App.DB.Pool)
+	appHandlers.Models = app.Models
 
 	return app
 }

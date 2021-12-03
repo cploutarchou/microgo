@@ -1,13 +1,15 @@
 package handlers
 
 import (
+	"app/data"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/cploutarchou/microGo"
 	"net/http"
 )
 
 type Handlers struct {
-	APP *microGo.MicroGo
+	APP    *microGo.MicroGo
+	Models data.Models
 }
 
 // Home Request Handler for home package.
