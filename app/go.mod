@@ -6,6 +6,7 @@ replace github.com/cploutarchou/microGo => ./../microGo
 
 require (
 	github.com/CloudyKit/jet/v6 v6.1.0
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/cploutarchou/microGo v0.0.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/upper/db/v4 v4.2.1
