@@ -94,7 +94,8 @@ func (u *User) Update(user User) error {
 	return nil
 }
 
-func (u *User) Delete(id User) error {
+// Delete deletes a user by id
+func (u *User) Delete(id int) error {
 	collection := upper.Collection(u.Table())
 	res := collection.Find(id)
 	err := res.Delete()

@@ -275,3 +275,15 @@ func TestUser_ResetPassword(t *testing.T) {
 	}
 
 }
+
+func TestUser_Delete(t *testing.T) {
+	err := models.Users.Delete(1)
+	if err != nil {
+		t.Error("Something went wrong, unable to delete user: ", err)
+	}
+
+	_, err = models.Users.GetByID(1)
+	if err == nil {
+		t.Error("Something went wrong. Retrieved user that was actually deleted. ")
+	}
+}
