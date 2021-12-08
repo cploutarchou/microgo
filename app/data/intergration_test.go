@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	_ "github.com/jackc/pgconn"
 	_ "github.com/jackc/pgx/v4"
@@ -285,5 +286,98 @@ func TestUser_Delete(t *testing.T) {
 	_, err = models.Users.GetByID(1)
 	if err == nil {
 		t.Error("Something went wrong. Retrieved user that was actually deleted. ")
+	}
+}
+func TestToken_Table(t *testing.T) {
+	s := models.Tokens.Table()
+	if s != "tokens" {
+		t.Error("Something went wrong, unexpected table name returned for tokens")
+	}
+}
+
+func TestToken_GenerateToken(t *testing.T) {
+	id, err := models.Users.Insert(dummyUSER)
+	if err != nil {
+		t.Error("Something went wrong, Unable to create user: ", err)
+	}
+
+	_, err = models.Tokens.GenerateToken(id, time.Hour*24*365)
+	if err != nil {
+		t.Error("Something went wrong, error generating a new token: ", err)
+	}
+}
+
+func TestToken_Insert(t *testing.T) {
+	u, err := models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error("Something went wrong, Unable to get user")
+	}
+
+	token, err := models.Tokens.GenerateToken(u.ID, time.Hour*24*365)
+	if err != nil {
+		t.Error("Something went wrong, Unable to generate token: ", err)
+	}
+
+	err = models.Tokens.Insert(*token, *u)
+	if err != nil {
+		t.Error("Something went wrong, Unable to insert token : ", err)
+	}
+}
+
+func TestToken_GetUserForToken(t *testing.T) {
+	token := "abc"
+	_, err := models.Tokens.GetUserByToken(token)
+	if err == nil {
+		t.Error("Something went wrong. Expected an error but not received when getting user with a not valid token")
+	}
+
+	u, err := models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error("failed to get user")
+	}
+
+	_, err = models.Tokens.GetByToken(u.Token.Text)
+	if err != nil {
+		t.Error("Something went wrong, Unable to get user with valid token: ", err)
+	}
+}
+
+func TestToken_GetTokensForUser(t *testing.T) {
+	tokens, err := models.Tokens.GetUserToken(1)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(tokens) > 0 {
+		t.Error("Something went wrong, tokens returned for non-existent user")
+	}
+}
+
+func TestToken_Get(t *testing.T) {
+	u, err := models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error("Something went wrong, unable to get user")
+	}
+
+	_, err = models.Tokens.Get(u.Token.ID)
+	if err != nil {
+		t.Error("Something went wrong, unable to get user by token  id: ", err)
+	}
+}
+
+func TestToken_GetByToken(t *testing.T) {
+	u, err := models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error("Something went wrong, unable to get user")
+	}
+
+	_, err = models.Tokens.GetByToken(u.Token.Text)
+	if err != nil {
+		t.Error("Something went wrong, Unable to get token by token: ", err)
+	}
+
+	_, err = models.Tokens.GetByToken("123")
+	if err == nil {
+		t.Error("Something went wrong, no error getting non-existing token by token: ", err)
 	}
 }
