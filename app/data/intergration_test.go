@@ -238,3 +238,40 @@ func TestUser_Update(t *testing.T) {
 		t.Error("Something went wrong, unable to update user last name.")
 	}
 }
+
+func TestUser_VerifyPassword(t *testing.T) {
+	u, err := models.Users.GetByID(1)
+	if err != nil {
+		t.Error("Something went wrong, unable to get user: ", err)
+	}
+
+	valid, err := u.VerifyPassword("mypassword")
+	if err != nil {
+		t.Error("Something went wrong, unable to verify user password: ", err)
+	}
+
+	if !valid {
+		t.Error("Something went wrong, NOT valid user password.")
+	}
+
+	valid, err = u.VerifyPassword("mypassword")
+	if err != nil {
+		t.Error("Something went wrong, unable to verify user password: ", err)
+	}
+
+	if !valid {
+		t.Error("Something went wrong, NOT valid user password.")
+	}
+}
+
+func TestUser_ResetPassword(t *testing.T) {
+	err := models.Users.ResetPassword(1, "new_pass")
+	if err != nil {
+		t.Error("Something went wrong, Unable to reset user password: ", err)
+	}
+	err = models.Users.ResetPassword(2, "new_pass")
+	if err == nil {
+		t.Error("Something went wrong, No any error while resetting user password for no valid user id. ", err)
+	}
+
+}
