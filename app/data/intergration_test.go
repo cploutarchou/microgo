@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"testing"
 	"time"
@@ -380,4 +381,83 @@ func TestToken_GetByToken(t *testing.T) {
 	if err == nil {
 		t.Error("Something went wrong, no error getting non-existing token by token: ", err)
 	}
+}
+
+var authData = []struct {
+	name          string
+	token         string
+	email         string
+	errorExpected bool
+	message       string
+}{
+	{"invalid", "abdcefdsskhjhrererer", "wrong@novalid.com", true, "Invalid token. Accepted as valid."},
+	{"invalid_length", "abdcefdsskhjhrererer", "wrong@novalid.com", true, "Token length is not valid. Token accepted as valid."},
+	{"user_not_found", "abdabdcefdsskhjhrererer", "wrong@novalid.com", true, "Invalid User. Token accepted as valid."},
+	{"valid", "abdcefdsskhjhrererer", "wrong@novalid.com", false, "Valid token found but reported as invalid."},
+}
+
+func TestToken_AuthenticateToken(t *testing.T) {
+	for _, tt := range authData {
+		token := ""
+		if tt.email == dummyUSER.Email {
+			user, err := models.Users.GetByEmail(tt.email)
+			if err != nil {
+				t.Error("Something went wrong, unable to get user: ", err)
+			}
+			token = user.Token.Text
+		} else {
+			token = tt.token
+		}
+
+		req, _ := http.NewRequest("GET", "/", nil)
+		req.Header.Add("Authorization", "Bearer "+token)
+
+		_, err := models.Tokens.Authenticate(req)
+		if tt.errorExpected && err == nil {
+			t.Errorf("%s: %s", tt.name, tt.message)
+		} else if !tt.errorExpected && err == nil {
+			t.Errorf("%s: %s - %s", tt.name, tt.message, err)
+		} else {
+			t.Logf("passed %s", tt.name)
+		}
+	}
+}
+
+func TestToken_Delete(t *testing.T) {
+	u, err := models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = models.Tokens.DeleteByToken(u.Token.Text)
+	if err != nil {
+		t.Error("Something went wrong Unable to delete token: ", err)
+	}
+}
+
+func TestToken_ExpiredToken(t *testing.T) {
+	// insert a token
+	u, err := models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error(err)
+	}
+
+	token, err := models.Tokens.GenerateToken(u.ID, -time.Hour)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = models.Tokens.Insert(*token, *u)
+	if err != nil {
+		t.Error(err)
+	}
+
+	req, _ := http.NewRequest("GET", "/", nil)
+	req.Header.Add("Authorization", "Bearer "+token.Text)
+
+	_, err = models.Tokens.Authenticate(req)
+	if err != nil {
+		t.Error("failed to get expired token")
+	}
+
 }
