@@ -469,7 +469,7 @@ func TestToken_BadHeader(t *testing.T) {
 	}
 
 	req, _ = http.NewRequest("GET", "/", nil)
-	req.Header.Add("Autorzation", "a4343")
+	req.Header.Add("Autorization", "a4343")
 	_, err = models.Tokens.Authenticate(req)
 	if err == nil {
 		t.Error("Failed to catch  bad auth header")
