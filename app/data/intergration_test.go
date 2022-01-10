@@ -461,3 +461,107 @@ func TestToken_ExpiredToken(t *testing.T) {
 	}
 
 }
+func TestToken_BadHeader(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/", nil)
+	_, err := models.Tokens.Authenticate(req)
+	if err == nil {
+		t.Error("failed to catch missing auth header")
+	}
+
+	req, _ = http.NewRequest("GET", "/", nil)
+	req.Header.Add("Autorzation", "a4343")
+	_, err = models.Tokens.Authenticate(req)
+	if err == nil {
+		t.Error("Failed to catch  bad auth header")
+	}
+
+	newUser := User{
+		FirstName: "kokos",
+		LastName:  "kokou_last",
+		Email:     "kokos@kokou.com",
+		Active:    1,
+		Password:  "a4343",
+	}
+
+	id, err := models.Users.Insert(newUser)
+	if err != nil {
+		t.Error(err)
+	}
+
+	token, err := models.Tokens.GenerateToken(id, 1*time.Hour)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = models.Tokens.Insert(*token, newUser)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = models.Users.Delete(id)
+	if err != nil {
+		t.Error(err)
+	}
+
+	req, _ = http.NewRequest("GET", "/", nil)
+	req.Header.Add("Autorization", "Bearer "+token.Text)
+	_, err = models.Tokens.Authenticate(req)
+	if err == nil {
+		t.Error("Failed to catch auth token for a deleted user")
+	}
+
+}
+func TestToken_DeleteNonExistentToken(t *testing.T) {
+	err := models.Tokens.DeleteByToken("a4343")
+	if err != nil {
+		t.Error("Something went wrong Unable to delete token")
+	}
+}
+
+func TestToken_ValidToken(t *testing.T) {
+	u, err := models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error(err)
+	}
+
+	newToken, err := models.Tokens.GenerateToken(u.ID, 24*time.Hour)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = models.Tokens.Insert(*newToken, *u)
+	if err != nil {
+		t.Error(err)
+	}
+
+	ok, err := models.Tokens.IsValid(newToken.Text)
+	if err != nil {
+		t.Error("Something went wrong while calling ValidToken: ", err)
+	}
+	if !ok {
+		t.Error("Something went wrong. valid token reported as invalid")
+	}
+
+	ok, err = models.Tokens.IsValid("a4343")
+	if ok {
+		t.Error("Something went wrong invalid token reported as valid")
+	}
+
+	u, err = models.Users.GetByEmail(dummyUSER.Email)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = models.Tokens.Delete(u.Token.ID)
+	if err != nil {
+		t.Error(err)
+	}
+
+	ok, err = models.Tokens.IsValid(u.Token.Text)
+	if err == nil {
+		t.Error(err)
+	}
+	if ok {
+		t.Error("Something went wrong  . No error reported when validating non-existent token")
+	}
+}
