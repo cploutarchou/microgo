@@ -12,7 +12,7 @@ import (
 )
 
 type Token struct {
-	ID        int       `db:"id"`
+	ID        int       `db:"id,omitempty"`
 	UserID    int       `db:"user_id" json:"user_id"`
 	FirstName string    `db:"first_name" json:"first_name"`
 	Email     string    `db:"email" json:"email"`
@@ -160,12 +160,12 @@ func (t *Token) Authenticate(r *http.Request) (*User, error) {
 		return nil, errors.New("Token wrong size. ")
 	}
 
-	t, err := t.GetByToken(token)
+	_token, err := t.GetByToken(token)
 	if err != nil {
 		return nil, errors.New("No matching token found. ")
 	}
 
-	if t.Expires.Before(time.Now()) {
+	if _token.Expires.Before(time.Now()) {
 		return nil, errors.New("Expired token. ")
 	}
 
