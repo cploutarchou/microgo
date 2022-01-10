@@ -43,6 +43,7 @@ var pool *dockertest.Pool
 
 func TestMain(m *testing.M) {
 	os.Setenv("DATABASE_TYPE", "postgres")
+	os.Setenv("UPPER_DB_LOG", "ERROR")
 
 	p, err := dockertest.NewPool("")
 	if err != nil {
