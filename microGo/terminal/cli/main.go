@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/cploutarchou/microGo"
 	"github.com/fatih/color"
 	"log"
 	"os"
@@ -9,7 +10,7 @@ import (
 
 const version = "1.0.0"
 
-//var micro microGo.MicroGo
+var micro microGo.MicroGo
 
 func main() {
 	arg1, arg2, arg3, err := validateInput()
@@ -21,6 +22,14 @@ func main() {
 		help()
 	case "version":
 		color.HiWhite("Application version: " + version)
+	case "make":
+		if arg2 == "" {
+			gracefullyExit(errors.New("make command requires an argument . Available options: migration|model|handler "))
+		}
+		err = makeDo(arg2, arg3)
+		if err != nil {
+			gracefullyExit(err)
+		}
 	default:
 		log.Println(arg2, arg3)
 	}
