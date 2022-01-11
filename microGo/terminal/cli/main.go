@@ -17,6 +17,8 @@ func main() {
 	if err != nil {
 		gracefullyExit(err)
 	}
+
+	setup()
 	switch arg1 {
 	case "help":
 		help()
