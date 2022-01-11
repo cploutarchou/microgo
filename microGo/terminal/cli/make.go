@@ -16,14 +16,14 @@ func makeDo(arg2, arg3 string) error {
 		}
 
 		filename := fmt.Sprintf("%d_%s", time.Now().UnixMicro(), arg3)
-		mirgationsUpFile := micro.RootPath + "/migrations/" + filename + "." + databaseType + ".up.sql"
-		mirgationsDownFile := micro.RootPath + "/migrations/" + filename + "." + databaseType + ".down.sql"
+		migrationsUpFile := micro.RootPath + "/migrations/" + filename + "." + databaseType + ".up.sql"
+		migrationsDownFile := micro.RootPath + "/migrations/" + filename + "." + databaseType + ".down.sql"
 
-		err := copyTemplateFile("templates/migrations/migration."+databaseType+".up.sql", mirgationsUpFile)
+		err := copyTemplateFile("templates/migrations/migration."+databaseType+".up.sql", migrationsUpFile)
 		if err != nil {
 			gracefullyExit(err)
 		}
-		err = copyTemplateFile("templates/migrations/migration."+databaseType+".down.sql", mirgationsDownFile)
+		err = copyTemplateFile("templates/migrations/migration."+databaseType+".down.sql", migrationsDownFile)
 		if err != nil {
 			gracefullyExit(err)
 		}
