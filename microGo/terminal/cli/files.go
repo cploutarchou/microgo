@@ -8,20 +8,18 @@ import (
 //go:embed templates
 var templatesFS embed.FS
 
-func copyTemplateFile(path, file string) error {
+func copyTemplateFile(templatesPath, targetFile string) error {
 
-	// check if file exists already.
-	data, err := templatesFS.ReadFile(path)
+	data, err := templatesFS.ReadFile(templatesPath)
 	if err != nil {
 		gracefullyExit(err)
 	}
 
-	err = copyDataToFile(data, file)
+	err = copyDataToFile(data, targetFile)
 	if err != nil {
 		gracefullyExit(err)
 	}
 	return nil
-
 }
 
 func copyDataToFile(data []byte, toFile string) error {
