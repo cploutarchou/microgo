@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: microGo
     volumes:
-      - ./docker/init/postgres/init.sql:/docker-entrypoint-initdb.d
+      - ./init/postgres:/docker-entrypoint-initdb.d/
 
 volumes:
   postgres:
