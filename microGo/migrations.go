@@ -1,6 +1,7 @@
 package microGo
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -12,6 +13,8 @@ import (
 )
 
 func (m *MicroGo) MigrateUp(dsn string) error {
+	fmt.Println(m.RootPath)
+	// TODO: Add windows support.
 	mig, err := migrate.New("file://"+m.RootPath+"/migrations", dsn)
 	if err != nil {
 		return err
@@ -28,6 +31,7 @@ func (m *MicroGo) MigrateUp(dsn string) error {
 }
 
 func (m *MicroGo) MigrateDownAll(dsn string) error {
+	// TODO: Add windows support.
 	mig, err := migrate.New("file://"+m.RootPath+"/migrations", dsn)
 	if err != nil {
 		return err
@@ -44,6 +48,7 @@ func (m *MicroGo) MigrateDownAll(dsn string) error {
 }
 
 func (m *MicroGo) Steps(n int, dsn string) error {
+	// TODO: Add windows support.
 	mig, err := migrate.New("file://"+m.RootPath+"/migrations", dsn)
 	if err != nil {
 		return err
@@ -60,6 +65,7 @@ func (m *MicroGo) Steps(n int, dsn string) error {
 }
 
 func (m *MicroGo) MigrateForce(dsn string) error {
+	// TODO: Add windows support.
 	mig, err := migrate.New("file://"+m.RootPath+"/migrations", dsn)
 	if err != nil {
 		return err
