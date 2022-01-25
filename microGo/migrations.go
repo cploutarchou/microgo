@@ -3,6 +3,8 @@ package microGo
 import (
 	"fmt"
 	"log"
+	"runtime"
+	"strings"
 
 	"github.com/golang-migrate/migrate/v4"
 
@@ -13,12 +15,19 @@ import (
 )
 
 func (m *MicroGo) MigrateUp(dsn string) error {
-	fmt.Println(m.RootPath)
-	// TODO: Add windows support.
-	mig, err := migrate.New("file://"+m.RootPath+"/migrations", dsn)
+	var path string
+	path = "file://" + m.RootPath + "/migrations"
+	if runtime.GOOS == "windows" {
+		path = fmt.Sprintf(strings.Replace(path, "/", "\\", -1))
+		fmt.Println(path)
+	} else {
+		path = "file://" + m.RootPath + "/migrations"
+	}
+	mig, err := migrate.New(path, dsn)
 	if err != nil {
 		return err
 	}
+	fmt.Println(path)
 	defer func(mig *migrate.Migrate) {
 		_, _ = mig.Close()
 	}(mig)
