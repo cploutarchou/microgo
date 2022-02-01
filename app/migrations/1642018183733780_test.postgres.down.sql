@@ -1,1 +1,1 @@
--- drop table some_table;
+drop table some_table;
