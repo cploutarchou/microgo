@@ -15,7 +15,7 @@ func makeDo(arg2, arg3 string) error {
 			gracefullyExit(errors.New("something went wrong. Migration name is not specified"))
 		}
 
-		filename := fmt.Sprintf("%d_%s", time.Now().UnixMicro(), arg3)
+		filename := fmt.Sprintf("%d_%s", time.Now().Unix(), arg3)
 		migrationsUpFile := micro.RootPath + "/migrations/" + filename + "." + databaseType + ".up.sql"
 		migrationsDownFile := micro.RootPath + "/migrations/" + filename + "." + databaseType + ".down.sql"
 		err := copyTemplateFile("templates/migrations/migration."+databaseType+".up.sql", migrationsUpFile)
