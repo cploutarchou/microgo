@@ -9,3 +9,8 @@ cover:
 ## coverage: displays test coverage
 coverage:
 	@go test -cover ./...
+
+
+## build_cli: builds the command line tool microGo and copies it to app folder
+build_cli:
+	@go build -o ../app/microGo ./terminal/cli
