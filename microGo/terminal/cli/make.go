@@ -26,6 +26,13 @@ func makeDo(arg2, arg3 string) error {
 		if err != nil {
 			gracefullyExit(err)
 		}
+
+	case "auth":
+		err := doAuth()
+		if err != nil {
+			gracefullyExit(err)
+		}
+
 	}
 	return nil
 }
