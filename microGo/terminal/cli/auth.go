@@ -12,10 +12,10 @@ func doAuth() error {
 
 	dbType := micro.DB.DatabaseType
 	filename := fmt.Sprintf("%d_create_auth_tables", time.Now().Unix())
-	upFile := micro.RootPath + "/migrations" + filename + ".up.sql"
-	downFile := micro.RootPath + "/migrations" + filename + ".down.sql"
+	upFile := micro.RootPath + "/migrations/" + filename + ".up.sql"
+	downFile := micro.RootPath + "/migrations/" + filename + ".down.sql"
 	log.Println(dbType, upFile, downFile)
-	err := copyTemplateFile("templates/migrations/auth_tables"+dbType+".sql", upFile)
+	err := copyTemplateFile("templates/migrations/auth_tables."+dbType+".sql", upFile)
 	if err != nil {
 		gracefullyExit(err)
 	}
