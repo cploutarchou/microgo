@@ -1,4 +1,6 @@
-# MicroGO
+## MicroGO the Go version of Laravel Framework
+
+**NOTE**: WORK IN PROGRESS
 
 ### MicroGO Terminal Commands:
 
