@@ -2,32 +2,41 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 )
 
 func doAuth() error {
-
-	//migrations
-
+	// migrations
 	dbType := micro.DB.DatabaseType
-	filename := fmt.Sprintf("%d_create_auth_tables", time.Now().Unix())
-	upFile := micro.RootPath + "/migrations/" + filename + ".up.sql"
-	downFile := micro.RootPath + "/migrations/" + filename + ".down.sql"
-	log.Println(dbType, upFile, downFile)
+	fileName := fmt.Sprintf("%d_create_auth_tables", time.Now().Unix())
+	upFile := micro.RootPath + "/migrations/" + fileName + ".up.sql"
+	downFile := micro.RootPath + "/migrations/" + fileName + ".down.sql"
+
 	err := copyTemplateFile("templates/migrations/auth_tables."+dbType+".sql", upFile)
 	if err != nil {
 		gracefullyExit(err)
 	}
-	err = copyDataToFile([]byte("drop table if exists users cascade"), downFile)
+
+	err = copyDataToFile([]byte("drop table if exists users cascade; drop table if exists tokens cascade; drop table if exists remember_tokens;"), downFile)
 	if err != nil {
 		gracefullyExit(err)
 	}
-	//run migrations
+
+	// run migrations
 	err = doMigrate("up", "")
 	if err != nil {
 		gracefullyExit(err)
 	}
-	//copy files
+
+	err = copyTemplateFile("templates/data/user.go.txt", micro.RootPath+"/data/user.go")
+	if err != nil {
+		gracefullyExit(err)
+	}
+
+	err = copyTemplateFile("templates/data/token.go.txt", micro.RootPath+"/data/token.go")
+	if err != nil {
+		gracefullyExit(err)
+	}
+
 	return nil
 }

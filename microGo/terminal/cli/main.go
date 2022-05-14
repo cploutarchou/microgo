@@ -35,7 +35,7 @@ func main() {
 		if err != nil {
 			gracefullyExit(err)
 		}
-		message = "Migrations successfully migrated!"
+		message = "Migration successfully completed."
 
 	case "make":
 		if arg2 == "" {
