@@ -1,3 +1,5 @@
 .idea
 /app/microGo
 /microGo/vendor
+app/.DS_Store
+app/data/.DS_Store
