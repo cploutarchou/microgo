@@ -1,8 +1,36 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2022 Christos Ploutarchou
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package main
 
 import (
 	"errors"
 	"fmt"
+	"github.com/gertd/go-pluralize"
+	"github.com/iancoleman/strcase"
+	"io/ioutil"
+	"strings"
 	"time"
 )
 
@@ -35,8 +63,54 @@ func makeDo(arg2, arg3 string) error {
 		if err != nil {
 			gracefullyExit(err)
 		}
+	case "handler":
+		if arg3 == "" {
+			gracefullyExit(errors.New("you must give the handler a name"))
+		}
 
+		fileName := micro.RootPath + "/handlers/" + strings.ToLower(arg3) + ".go"
+		if fileExists(fileName) {
+			gracefullyExit(errors.New(fileName + " already exists!"))
+		}
+
+		data, err := templateFS.ReadFile("templates/handlers/handler.go.txt")
+		if err != nil {
+			gracefullyExit(err)
+		}
+
+		handler := string(data)
+		handler = strings.ReplaceAll(handler, "$HANDLERNAME$", strcase.ToCamel(arg3))
+
+		err = ioutil.WriteFile(fileName, []byte(handler), 0644)
+		if err != nil {
+			gracefullyExit(err)
+		}
+	case "model":
+		if arg3 == "" {
+			gracefullyExit(errors.New("you must give a name to your model!"))
+		}
+		data, err := templateFS.ReadFile("templates/data/model.go.txt")
+		if err != nil {
+			gracefullyExit(err)
+		}
+		model := string(data)
+		prul := pluralize.NewClient()
+		var modelName = arg3
+		var tableName = arg3
+		if prul.IsPlural(arg3) {
+			modelName = prul.Singular(arg3)
+			tableName = strings.ToLower(tableName)
+		} else {
+			tableName = strings.ToLower(prul.Plural(arg3))
+		}
+		fileName := micro.RootPath + "/data/" + strings.ToLower(modelName) + ".go"
+		model = strings.ReplaceAll(model, "$MODELNAME$", strcase.ToCamel(modelName))
+		model = strings.ReplaceAll(model, "$TABLENAME$", tableName)
+
+		err = copyDataToFile([]byte(model), fileName)
+		if err != nil {
+			gracefullyExit(err)
+		}
 	}
-
 	return nil
 }

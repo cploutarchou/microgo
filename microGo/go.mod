@@ -6,9 +6,11 @@ require (
 	github.com/CloudyKit/jet/v6 v6.1.0
 	github.com/alexedwards/scs/v2 v2.4.0
 	github.com/fatih/color v1.12.0
+	github.com/gertd/go-pluralize v0.2.1
 	github.com/go-chi/chi/v5 v5.0.4
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang-migrate/migrate/v4 v4.14.1
+	github.com/iancoleman/strcase v0.2.0
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/joho/godotenv v1.3.0
