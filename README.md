@@ -5,7 +5,9 @@ In MicroGO, I take some of the most valuable features in Laravel and implement s
 Since Go is compiled and type-safe, web applications written in this language are typically much faster and far less
 error-prone than an equivalent application, Laravel, written in PHP.
 
-**NOTE**: WORK IN PROGRESS
+________________________________
+# Work-in-Progress ....................................
+________________________________
 
 ### MicroGO Terminal Commands:
 
@@ -18,3 +20,5 @@ error-prone than an equivalent application, Laravel, written in PHP.
 * **make migration migration_name**  - creates two new up and down migrations in the migrations folder
 * **make handler handler_name**      - create a stub handler on handlers directory
 * **make model  model_name**          - create a new mode in the models directory
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=EH6BNRFVPZ63N)
