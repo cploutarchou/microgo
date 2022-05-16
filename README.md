@@ -17,4 +17,4 @@ error-prone than an equivalent application, Laravel, written in PHP.
 * **migrate reset**                  - runs all down migrations in reverse order, and then all up migrations
 * **make migration migration_name**  - creates two new up and down migrations in the migrations folder
 * **make handler handler_name**      - create a stub handler on handlers directory
-* **make model model_name**          - create a new mode in the models directory
+* **make model  model_name**          - create a new mode in the models directory
