@@ -58,7 +58,7 @@ func (a *application) routes() *chi.Mux {
 
 	a.App.Routes.Get("/get_user/{id}", func(writer http.ResponseWriter, request *http.Request) {
 		id, _ := strconv.Atoi(chi.URLParam(request, "id"))
-		user, err := a.Models.Users.GetByID(id)
+		user, err := a.Models.Users.Get(id)
 		if err != nil {
 			a.App.ErrorLog.Println(err)
 			return
@@ -72,7 +72,7 @@ func (a *application) routes() *chi.Mux {
 	})
 	a.App.Routes.Get("/update_user/{id}", func(writer http.ResponseWriter, request *http.Request) {
 		id, _ := strconv.Atoi(chi.URLParam(request, "id"))
-		user, err := a.Models.Users.GetByID(id)
+		user, err := a.Models.Users.Get(id)
 		if err != nil {
 			a.App.ErrorLog.Println(err)
 			return

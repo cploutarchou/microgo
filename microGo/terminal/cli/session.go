@@ -22,30 +22,43 @@
  * SOFTWARE.
  */
 
-package microGo
+package main
 
 import (
-	"database/sql"
-
-	_ "github.com/jackc/pgconn"
-	_ "github.com/jackc/pgx/v4"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	"fmt"
+	"time"
 )
 
-func (m *MicroGo) OpenDB(driverName, dataSourceName string) (*sql.DB, error) {
-	if driverName == "postgres" || driverName == "postgresql" {
-		driverName = "pgx"
+func createSessionTable() error {
+	dbType := micro.DB.DatabaseType
+
+	if dbType == "mariadb" {
+		dbType = "mysql"
 	}
 
-	db, err := sql.Open(driverName, dataSourceName)
+	if dbType == "postgresql" {
+		dbType = "postgres"
+	}
+
+	fileName := fmt.Sprintf("%d_create_sessions_table", time.Now().UnixMicro())
+
+	upFile := micro.RootPath + "/migrations/" + fileName + "." + dbType + ".up.sql"
+	downFile := micro.RootPath + "/migrations/" + fileName + "." + dbType + ".down.sql"
+
+	err := copyTemplateFile("templates/migrations/"+dbType+"_session.sql", upFile)
 	if err != nil {
-		return nil, err
+		gracefullyExit(err)
 	}
 
-	err = db.Ping()
+	err = copyDataToFile([]byte("drop table sessions"), downFile)
 	if err != nil {
-		return nil, err
+		gracefullyExit(err)
 	}
 
-	return db, nil
+	err = doMigrate("up", "")
+	if err != nil {
+		gracefullyExit(err)
+	}
+
+	return nil
 }
