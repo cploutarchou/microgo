@@ -19,7 +19,6 @@ func (m *MicroGo) MigrateUp(dsn string) error {
 	path = "file://" + m.RootPath + "/migrations"
 	if runtime.GOOS == "windows" {
 		path = fmt.Sprintf(strings.Replace(path, "/", "\\", -1))
-		fmt.Println(path)
 	} else {
 		path = "file://" + m.RootPath + "/migrations"
 	}
@@ -27,7 +26,6 @@ func (m *MicroGo) MigrateUp(dsn string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(path)
 	defer func(mig *migrate.Migrate) {
 		_, _ = mig.Close()
 	}(mig)

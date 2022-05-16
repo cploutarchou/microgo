@@ -1,2 +1,12 @@
 .idea
 /app/microGo
+/microGo/vendor
+app/.DS_Store
+app/data/.DS_Store
+app/middleware/auth-token.go
+app/middleware/auth.go
+app/data/token.go
+app/data/user.go
+app/migrations
+app/tmp
+app/vendor

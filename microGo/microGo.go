@@ -112,6 +112,7 @@ func (m *MicroGo) New(rootPath string) error {
 		CookieName:     m.config.cookie.name,
 		SessionType:    m.config.sessionType,
 		CookieDomain:   m.config.cookie.domain,
+		DBPool:         m.DB.Pool,
 	}
 	m.Session = _session.InitializeSession()
 

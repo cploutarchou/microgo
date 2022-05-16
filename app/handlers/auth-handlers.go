@@ -33,7 +33,7 @@ func (h *Handlers) PostUserLogin(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	valid, err := user.VerifyPassword(password)
+	valid, err := user.PasswordMatches(password)
 	if err != nil {
 		_, err := w.Write([]byte(err.Error()))
 		if err != nil {
