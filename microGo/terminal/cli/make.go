@@ -87,7 +87,7 @@ func makeDo(arg2, arg3 string) error {
 		}
 	case "model":
 		if arg3 == "" {
-			gracefullyExit(errors.New("you must give a name to your model!"))
+			gracefullyExit(errors.New("you must give a name to your model"))
 		}
 		data, err := templateFS.ReadFile("templates/data/model.go.txt")
 		if err != nil {
@@ -104,10 +104,18 @@ func makeDo(arg2, arg3 string) error {
 			tableName = strings.ToLower(prul.Plural(arg3))
 		}
 		fileName := micro.RootPath + "/data/" + strings.ToLower(modelName) + ".go"
+		if fileExists(fileName) {
+			gracefullyExit(errors.New(fileName + " already exists!"))
+		}
 		model = strings.ReplaceAll(model, "$MODELNAME$", strcase.ToCamel(modelName))
 		model = strings.ReplaceAll(model, "$TABLENAME$", tableName)
 
 		err = copyDataToFile([]byte(model), fileName)
+		if err != nil {
+			gracefullyExit(err)
+		}
+	case "session":
+		err := createSessionTable()
 		if err != nil {
 			gracefullyExit(err)
 		}

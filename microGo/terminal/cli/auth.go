@@ -33,7 +33,7 @@ import (
 func doAuth() error {
 	// migrations
 	dbType := micro.DB.DatabaseType
-	fileName := fmt.Sprintf("%d_create_auth_tables", time.Now().Unix())
+	fileName := fmt.Sprintf("%d_create_auth_tables", time.Now().UnixMicro())
 	upFile := micro.RootPath + "/migrations/" + fileName + ".up.sql"
 	downFile := micro.RootPath + "/migrations/" + fileName + ".down.sql"
 

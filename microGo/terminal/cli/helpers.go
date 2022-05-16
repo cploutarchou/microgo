@@ -88,7 +88,8 @@ func help() {
 	migrate reset         - runs all down migrations in reverse order, and then all up migrations
 	make migration <name> - creates two new up and down migrations in the migrations folder
 	make handler <name>   - create a stub handler on handlers directory
-	make model <name>     - create a new mode in the models directory
+	make model <name>     - create a new mode in the data directory
+	make session          - create a new table in the database as a session storage
 	
 	`)
 }
