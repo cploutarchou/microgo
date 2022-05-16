@@ -8,3 +8,5 @@ app/middleware/auth.go
 app/data/token.go
 app/data/user.go
 app/migrations
+app/tmp
+app/vendor
