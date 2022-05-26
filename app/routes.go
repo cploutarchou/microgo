@@ -78,6 +78,13 @@ func (a *application) routes() *chi.Mux {
 			return
 		}
 		user.LastName = a.App.CreateRandomString(10)
+		validator := a.App.Validator(nil)
+		user.LastName = ""
+		user.Validate(validator)
+		if !validator.Valid() {
+			fmt.Fprint(writer, "Validation failed")
+			return
+		}
 		err = user.Update(*user)
 		if err != nil {
 			a.App.ErrorLog.Println(err)
