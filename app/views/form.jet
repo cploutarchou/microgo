@@ -11,9 +11,7 @@ Form
 
 <hr>
 
-<form method="post" action="/form"
-      class="d-block needs-validation"
-      autocomplete="off" novalidate>
+<form method="post" action="/form"  class="d-block needs-validation" autocomplete="off" novalidate>
 
     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 

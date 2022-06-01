@@ -6,6 +6,7 @@ replace cloud0.christosploutarchou.com/cploutarchou/MicroGO => ./../microGo
 
 require (
 	cloud0.christosploutarchou.com/cploutarchou/MicroGO v0.0.0-00010101000000-000000000000
+	github.com/CloudyKit/jet/v6 v6.1.0
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/jackc/pgconn v1.10.1
@@ -18,7 +19,6 @@ require (
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/CloudyKit/fastprinter v0.0.0-20200109182630-33d98a066a53 // indirect
-	github.com/CloudyKit/jet/v6 v6.1.0 // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/alexedwards/scs/mysqlstore v0.0.0-20220216073957-c252878bcf5a // indirect
