@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"app/data"
+	microGo "cloud0.christosploutarchou.com/cploutarchou/MicroGO"
 	"github.com/CloudyKit/jet/v6"
-	"github.com/cploutarchou/microGo"
 	"net/http"
 )
 

@@ -4,7 +4,7 @@ import (
 	"app/data"
 	"app/handlers"
 	"app/middleware"
-	"github.com/cploutarchou/microGo"
+	microGo "cloud0.christosploutarchou.com/cploutarchou/MicroGO"
 	"log"
 	"os"
 )
