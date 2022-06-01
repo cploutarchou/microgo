@@ -2,17 +2,18 @@ module app
 
 go 1.17
 
-replace github.com/cploutarchou/microGo => ./../microGo
+replace cloud0.christosploutarchou.com/cploutarchou/MicroGO => ./../microGo
 
 require (
+	cloud0.christosploutarchou.com/cploutarchou/MicroGO v0.0.0-00010101000000-000000000000
 	github.com/CloudyKit/jet/v6 v6.1.0
 	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/cploutarchou/microGo v0.0.0-00010101000000-000000000000
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/jackc/pgconn v1.10.1
 	github.com/jackc/pgx/v4 v4.14.1
 	github.com/ory/dockertest/v3 v3.8.1
 	github.com/upper/db/v4 v4.5.0
+	golang.org/x/crypto v0.0.0-20220128200615-198e4374d7ed
 )
 
 require (
@@ -23,6 +24,7 @@ require (
 	github.com/alexedwards/scs/mysqlstore v0.0.0-20220216073957-c252878bcf5a // indirect
 	github.com/alexedwards/scs/postgresstore v0.0.0-20220216073957-c252878bcf5a // indirect
 	github.com/alexedwards/scs/v2 v2.5.0 // indirect
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/containerd/continuity v0.1.0 // indirect
 	github.com/docker/cli v20.10.11+incompatible // indirect
@@ -55,7 +57,6 @@ require (
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	go.uber.org/atomic v1.6.0 // indirect
-	golang.org/x/crypto v0.0.0-20220128200615-198e4374d7ed // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
 	golang.org/x/text v0.3.7 // indirect

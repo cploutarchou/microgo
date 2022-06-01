@@ -1,12 +1,12 @@
 package microGo
 
 import (
+	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/render"
+	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/session"
 	"database/sql"
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
-	"github.com/cploutarchou/microGo/render"
-	"github.com/cploutarchou/microGo/session"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	"log"
