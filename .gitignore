@@ -10,3 +10,4 @@ app/data/user.go
 app/migrations
 app/tmp
 app/vendor
+app/migrations/*.sql
