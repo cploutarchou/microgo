@@ -13,16 +13,16 @@ func (a *application) routes() *chi.Mux {
 	// Note : All the middlewares must come before the routes
 
 	// Add routes here
-	a.App.Routes.Get("/", a.Handlers.Home)
-	a.App.Routes.Get("/go-page", a.Handlers.GoHome)
-	a.App.Routes.Get("/jet-page", a.Handlers.JetHome)
-	a.App.Routes.Get("/sessions", a.Handlers.SessionTest)
-	a.App.Routes.Get("/users/login", a.Handlers.UserLogin)
-	a.App.Routes.Post("/users/login", a.Handlers.PostUserLogin)
-	a.App.Routes.Get("/users/logout", a.Handlers.Logout)
-	a.App.Routes.Get("/form", a.Handlers.Form)
+	a.get("/", a.Handlers.Home)
+	a.get("/go-page", a.Handlers.GoHome)
+	a.get("/jet-page", a.Handlers.JetHome)
+	a.get("/sessions", a.Handlers.SessionTest)
+	a.get("/users/login", a.Handlers.UserLogin)
+	a.post("/users/login", a.Handlers.PostUserLogin)
+	a.get("/users/logout", a.Handlers.Logout)
+	a.get("/form", a.Handlers.Form)
 	a.App.Routes.Post("/form", a.Handlers.PostForm)
-	a.App.Routes.Get("/create_user", func(writer http.ResponseWriter, request *http.Request) {
+	a.get("/create_user", func(writer http.ResponseWriter, request *http.Request) {
 		u := data.User{
 			FirstName: "Christos",
 			LastName:  "Ploutarchou",
@@ -42,7 +42,7 @@ func (a *application) routes() *chi.Mux {
 			return
 		}
 	})
-	a.App.Routes.Get("/get_all_users", func(writer http.ResponseWriter, request *http.Request) {
+	a.get("/get_all_users", func(writer http.ResponseWriter, request *http.Request) {
 		users, err := a.Models.Users.GetAll()
 		if err != nil {
 			a.App.ErrorLog.Println(err)
@@ -58,7 +58,7 @@ func (a *application) routes() *chi.Mux {
 		}
 	})
 
-	a.App.Routes.Get("/get_user/{id}", func(writer http.ResponseWriter, request *http.Request) {
+	a.get("/get_user/{id}", func(writer http.ResponseWriter, request *http.Request) {
 		id, _ := strconv.Atoi(chi.URLParam(request, "id"))
 		user, err := a.Models.Users.Get(id)
 		if err != nil {
@@ -72,7 +72,7 @@ func (a *application) routes() *chi.Mux {
 		}
 
 	})
-	a.App.Routes.Get("/update_user/{id}", func(writer http.ResponseWriter, request *http.Request) {
+	a.get("/update_user/{id}", func(writer http.ResponseWriter, request *http.Request) {
 		id, _ := strconv.Atoi(chi.URLParam(request, "id"))
 		user, err := a.Models.Users.Get(id)
 		if err != nil {
