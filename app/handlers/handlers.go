@@ -62,7 +62,7 @@ func (h *Handlers) Json(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) XML(w http.ResponseWriter, r *http.Request) {
-	var Payload struct {
+	type Payload struct {
 		ID         int64    `xml:"id"`
 		Name       string   `xml:"name"`
 		Activities []string `xml:"activities>activity"`
@@ -81,5 +81,8 @@ func (h *Handlers) XML(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) Download(w http.ResponseWriter, r *http.Request) {
-	h.APP.SentFile(w, r, "./public/icon", "favicon.png")
+	err := h.APP.SentFile(w, r, "./public/ico/", "favicon.png")
+	if err != nil {
+		h.APP.ErrorLog.Println(err)
+	}
 }

@@ -53,7 +53,7 @@ func (m *MicroGo) WriteXML(w http.ResponseWriter, status int, data interface{}, 
 func (m *MicroGo) SentFile(w http.ResponseWriter, r *http.Request, fileLocation, fileName string) error {
 	_path := path.Join(fileLocation, fileName)
 	fileToServe := filepath.Clean(_path)
-	w.Header().Set("Content-Type", fmt.Sprintf("attachment; file=\"%s\"", fileName))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; file=\"%s\"", fileName))
 	http.ServeFile(w, r, fileToServe)
 	return nil
 }

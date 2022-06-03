@@ -21,6 +21,10 @@ func (a *application) routes() *chi.Mux {
 	a.post("/users/login", a.Handlers.PostUserLogin)
 	a.get("/users/logout", a.Handlers.Logout)
 	a.get("/form", a.Handlers.Form)
+
+	a.get("/json", a.Handlers.Json)
+	a.get("/xml", a.Handlers.XML)
+	a.get("/download", a.Handlers.Download)
 	a.App.Routes.Post("/form", a.Handlers.PostForm)
 	a.get("/create_user", func(writer http.ResponseWriter, request *http.Request) {
 		u := data.User{
