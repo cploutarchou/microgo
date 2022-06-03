@@ -43,3 +43,43 @@ func (h *Handlers) SessionTest(w http.ResponseWriter, r *http.Request) {
 		h.APP.ErrorLog.Println("Unable to render page :", err)
 	}
 }
+
+func (h *Handlers) Json(w http.ResponseWriter, r *http.Request) {
+	var payload struct {
+		ID         int64    `json:"id"`
+		Name       string   `json:"name"`
+		Activities []string `json:"activities"`
+	}
+	payload.ID = 100
+	payload.Name = "Christos Ploutarchou"
+	payload.Activities = []string{"football", "programming", "reading"}
+
+	err := h.APP.WriteJson(w, http.StatusOK, payload)
+	if err != nil {
+		h.APP.ErrorLog.Println(err)
+	}
+
+}
+
+func (h *Handlers) XML(w http.ResponseWriter, r *http.Request) {
+	var Payload struct {
+		ID         int64    `xml:"id"`
+		Name       string   `xml:"name"`
+		Activities []string `xml:"activities>activity"`
+	}
+
+	var payload Payload
+	payload.ID = 100
+	payload.Name = "Christos Ploutarchou"
+	payload.Activities = []string{"football", "programming", "reading"}
+
+	err := h.APP.WriteXML(w, http.StatusOK, payload)
+	if err != nil {
+		h.APP.ErrorLog.Println(err)
+	}
+
+}
+
+func (h *Handlers) Download(w http.ResponseWriter, r *http.Request) {
+	h.APP.SentFile(w, r, "./public/icon", "favicon.png")
+}
