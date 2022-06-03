@@ -27,6 +27,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/gertd/go-pluralize"
 	"github.com/iancoleman/strcase"
 	"io/ioutil"
@@ -37,7 +38,9 @@ import (
 func makeDo(arg2, arg3 string) error {
 
 	switch arg2 {
-
+	case "key":
+		rnd := micro.CreateRandomString(32)
+		color.Yellow("Successfully created a 32 chars encryption key :  %s", rnd)
 	case "auth":
 		err := doAuth()
 		if err != nil {
