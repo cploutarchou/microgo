@@ -1,6 +1,7 @@
 package microGo
 
 import (
+	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/cache"
 	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/render"
 	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/session"
 	"database/sql"
@@ -8,6 +9,7 @@ import (
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
+	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -36,6 +38,7 @@ type MicroGo struct {
 	Session       *scs.SessionManager
 	DB            Database
 	EncryptionKey string
+	Cache         cache.Cache
 }
 
 type config struct {
@@ -44,6 +47,7 @@ type config struct {
 	cookie      cookieConfig
 	sessionType string
 	database    databaseConfig
+	redis       redisConfig
 }
 
 // New reads the .env file, creates our application config, populates the MicroGo type with settings
@@ -89,6 +93,10 @@ func (m *MicroGo) New(rootPath string) error {
 			Pool:         db,
 		}
 	}
+	if os.Getenv("CACHE") == "redis" {
+		redisCache := m.createRedisCacheClient()
+		m.Cache = redisCache
+	}
 	m.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	m.Version = version
 	m.RootPath = rootPath
@@ -105,6 +113,16 @@ func (m *MicroGo) New(rootPath string) error {
 			domain:   os.Getenv("COOKIE_DOMAIN"),
 		},
 		sessionType: os.Getenv("SESSION_TYPE"),
+		database: databaseConfig{
+			database:       os.Getenv("DATABASE_TYPE"),
+			dataSourceName: m.BuildDataSourceName(),
+		},
+		redis: redisConfig{
+			host:     os.Getenv("REDIS_HOST"),
+			port:     os.Getenv("REDIS_PORT"),
+			password: os.Getenv("REDIS_PASSWORD"),
+			prefix:   os.Getenv("REDIS_PREFIX"),
+		},
 	}
 	// initiate session
 	_session := session.Session{
@@ -218,4 +236,36 @@ func (m *MicroGo) BuildDataSourceName() string {
 
 	}
 	return dsn
+}
+
+func (m *MicroGo) createRedisPool() *redis.Pool {
+	return &redis.Pool{
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial(
+				"tcp",
+				fmt.Sprintf("%s:%s", m.config.redis.host, m.config.redis.port),
+				redis.DialPassword(m.config.redis.password),
+				redis.DialUsername(m.config.redis.username),
+			)
+		},
+		DialContext: nil,
+		TestOnBorrow: func(conn redis.Conn, t time.Time) error {
+			_, err := conn.Do("PING")
+			return err
+
+		},
+		MaxIdle:         50,
+		MaxActive:       10000,
+		IdleTimeout:     240 * time.Second,
+		Wait:            false,
+		MaxConnLifetime: 0,
+	}
+}
+
+func (m *MicroGo) createRedisCacheClient() *cache.RedisCache {
+	_client := cache.RedisCache{
+		Connect: m.createRedisPool(),
+		Prefix:  m.config.redis.prefix,
+	}
+	return &_client
 }

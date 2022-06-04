@@ -32,3 +32,27 @@ func (c *RedisCache) Exist(key string) (bool, error) {
 	}
 	return ok, nil
 }
+func (c *RedisCache) Get(s string) (interface{}, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *RedisCache) Set(s string, i interface{}, i2 ...int) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *RedisCache) Delete(s string) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *RedisCache) EmptyIfMatch(s string) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c *RedisCache) Empty() error {
+	//TODO implement me
+	panic("implement me")
+}
