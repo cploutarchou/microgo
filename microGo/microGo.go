@@ -21,20 +21,21 @@ const version = "1.0.0"
 // MicroGo is the overall type for the MicroGo package. Members that are exported in this type
 // are available to any application that uses it.
 type MicroGo struct {
-	AppName    string
-	Debug      bool
-	Version    string
-	ErrorLog   *log.Logger
-	InfoLog    *log.Logger
-	WarningLog *log.Logger
-	BuildLog   *log.Logger
-	RootPath   string
-	Routes     *chi.Mux
-	Render     *render.Render
-	JetView    *jet.Set
-	config     config
-	Session    *scs.SessionManager
-	DB         Database
+	AppName       string
+	Debug         bool
+	Version       string
+	ErrorLog      *log.Logger
+	InfoLog       *log.Logger
+	WarningLog    *log.Logger
+	BuildLog      *log.Logger
+	RootPath      string
+	Routes        *chi.Mux
+	Render        *render.Render
+	JetView       *jet.Set
+	config        config
+	Session       *scs.SessionManager
+	DB            Database
+	EncryptionKey string
 }
 
 type config struct {
@@ -115,6 +116,7 @@ func (m *MicroGo) New(rootPath string) error {
 		DBPool:         m.DB.Pool,
 	}
 	m.Session = _session.InitializeSession()
+	m.EncryptionKey = os.Getenv("ENCRYPTION_KEY")
 
 	var views = jet.NewSet(
 		jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", rootPath)),

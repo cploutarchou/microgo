@@ -31,6 +31,10 @@
         <a href="/sessions" class="list-group-item list-group-item-action">Try Sessions</a>
         <a href="/users/login" class="list-group-item list-group-item-action">Login a User</a>
         <a href="/form" class="list-group-item list-group-item-action">Form Validation</a>
+        <a href="/json" class="list-group-item list-group-item-action">Test for JSON Response</a>
+        <a href="/xml" class="list-group-item list-group-item-action">Test for XML Response</a>
+        <a href="/download" class="list-group-item list-group-item-action">Test for download file</a>
+        <a href="/encryption" class="list-group-item list-group-item-action">Test for encryption</a>
     </div>
 </div>
 
