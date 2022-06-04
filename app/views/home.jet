@@ -34,6 +34,7 @@
         <a href="/json" class="list-group-item list-group-item-action">Test for JSON Response</a>
         <a href="/xml" class="list-group-item list-group-item-action">Test for XML Response</a>
         <a href="/download" class="list-group-item list-group-item-action">Test for download file</a>
+        <a href="/encryption" class="list-group-item list-group-item-action">Test for encryption</a>
     </div>
 </div>
 

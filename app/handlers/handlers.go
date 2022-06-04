@@ -3,6 +3,7 @@ package handlers
 import (
 	"app/data"
 	microGo "cloud0.christosploutarchou.com/cploutarchou/MicroGO"
+	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"net/http"
 )
@@ -85,4 +86,25 @@ func (h *Handlers) Download(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.APP.ErrorLog.Println(err)
 	}
+}
+
+func (h *Handlers) TestEncryption(w http.ResponseWriter, r *http.Request) {
+	plaintext := "Christos Ploutarchou"
+	fmt.Fprint(w, "Unencrypted : "+plaintext+"\n")
+	encrypted, err := h.encrypt(plaintext)
+	if err != nil {
+		h.APP.ErrorLog.Println(err)
+		h.APP.ErrorUnprocessable(w)
+		return
+	}
+
+	fmt.Fprint(w, "Encrypted : "+encrypted+"\n")
+
+	decrypted, err := h.decrypt(encrypted)
+	if err != nil {
+		h.APP.ErrorLog.Println(err)
+		h.APP.ErrorUnprocessable(w)
+		return
+	}
+	fmt.Fprint(w, "Decrypted : "+decrypted+"\n")
 }
