@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	microGo "cloud0.christosploutarchou.com/cploutarchou/MicroGO"
 	"context"
 	"net/http"
 )
@@ -34,4 +35,21 @@ func (h *Handlers) sessionDestroy(ctx context.Context) error {
 
 func (h *Handlers) createRandomString(n int) string {
 	return h.APP.CreateRandomString(n)
+}
+
+func (h *Handlers) encrypt(text string) (string, error) {
+	enc := microGo.Encryption{Key: []byte(h.APP.EncryptionKey)}
+	encrypted, err := enc.Encrypt(text)
+	if err != nil {
+		return "", err
+	}
+	return encrypted, nil
+}
+func (h *Handlers) decrypt(encryptedString string) (string, error) {
+	enc := microGo.Encryption{Key: []byte(h.APP.EncryptionKey)}
+	decrypted, err := enc.Decrypt(encryptedString)
+	if err != nil {
+		return "", err
+	}
+	return decrypted, nil
 }
