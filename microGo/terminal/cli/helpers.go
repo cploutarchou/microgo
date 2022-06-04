@@ -90,6 +90,7 @@ func help() {
 	make handler <name>   - create a stub handler on handlers directory
 	make model <name>     - create a new mode in the data directory
 	make session          - create a new table in the database as a session storage
+	make key              - create a random key of 32 characters.
 	
 	`)
 }
