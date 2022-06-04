@@ -68,7 +68,7 @@ func (m *MicroGo) Error404(w http.ResponseWriter) {
 //Error500 : Return StatusInternal Server Error HTTP response .
 //
 //Status Code : 500
-func (m *MicroGo) Error500(w http.ResponseWriter) {
+func (m *MicroGo) Error500(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusInternalServerError)
 }
 
