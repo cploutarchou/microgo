@@ -35,6 +35,7 @@
         <a href="/xml" class="list-group-item list-group-item-action">Test for XML Response</a>
         <a href="/download" class="list-group-item list-group-item-action">Test for download file</a>
         <a href="/encryption" class="list-group-item list-group-item-action">Test for encryption</a>
+        <a href="/cache-test" class="list-group-item list-group-item-action">Test for cache</a>
     </div>
 </div>
 

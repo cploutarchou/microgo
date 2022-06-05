@@ -3,7 +3,9 @@ package microGo
 import (
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -25,6 +27,21 @@ func (m *MicroGo) WriteJson(w http.ResponseWriter, status int, data interface{},
 	_, err = w.Write(out)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (m *MicroGo) ReadJson(w http.ResponseWriter, r *http.Request, data interface{}) error {
+	maxBytesSize := 1 * 1024 * 1024 //1MB
+	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytesSize))
+	dec := json.NewDecoder(r.Body)
+	err := dec.Decode(data)
+	if err != nil {
+		return err
+	}
+	err = dec.Decode(&struct{}{})
+	if err != io.EOF {
+		return errors.New("The JSON Body need to have only single value. ")
 	}
 	return nil
 }

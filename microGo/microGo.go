@@ -264,8 +264,8 @@ func (m *MicroGo) createRedisPool() *redis.Pool {
 
 func (m *MicroGo) createRedisCacheClient() *cache.RedisCache {
 	_client := cache.RedisCache{
-		Connect: m.createRedisPool(),
-		Prefix:  m.config.redis.prefix,
+		Connection: m.createRedisPool(),
+		Prefix:     m.config.redis.prefix,
 	}
 	return &_client
 }
