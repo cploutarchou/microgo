@@ -8,31 +8,32 @@ import (
 )
 
 type Cache interface {
-	Exist(string) (bool, error)
+	Exists(string) (bool, error)
 	Get(string) (interface{}, error)
 	Set(string, interface{}, ...int) error
 	Delete(string) error
 	DeleteIfMatch(string) error
-	Empty() error
+	Clean() error
 }
 
 type RedisCache struct {
-	Connect *redis.Pool
-	Prefix  string
+	Connection *redis.Pool
+	Prefix     string
 }
 
 type Entry map[string]interface{}
 
-//Exist :  Check if the key exists
-func (c *RedisCache) Exist(key string) (bool, error) {
-	_key := fmt.Sprintf("%s:%s", c.Prefix, key)
-
-	conn := c.Connect.Get()
+//Exists :  Check if the key exists
+func (c *RedisCache) Exists(str string) (bool, error) {
+	key := fmt.Sprintf("%s:%s", c.Prefix, str)
+	conn := c.Connection.Get()
 	defer conn.Close()
-	ok, err := redis.Bool(conn.Do("EXIST", _key))
+
+	ok, err := redis.Bool(conn.Do("EXISTS", key))
 	if err != nil {
 		return false, err
 	}
+
 	return ok, nil
 }
 
@@ -61,107 +62,124 @@ func decode(str string) (Entry, error) {
 }
 
 //Get : Return Key values from Redis if it exists.
-func (c *RedisCache) Get(key string) (interface{}, error) {
-	_key := fmt.Sprintf("%s:%s", c.Prefix, key)
-	conn := c.Connect.Get()
+func (c *RedisCache) Get(str string) (interface{}, error) {
+	key := fmt.Sprintf("%s:%s", c.Prefix, str)
+	conn := c.Connection.Get()
 	defer conn.Close()
-	cacheEntry, err := redis.Bytes(conn.Do("GET", _key))
+
+	cacheEntry, err := redis.Bytes(conn.Do("GET", key))
 	if err != nil {
 		return nil, err
 	}
+
 	decoded, err := decode(string(cacheEntry))
 	if err != nil {
 		return nil, err
 	}
+
 	item := decoded[key]
+
 	return item, nil
 }
 
 //Set : Set a key value in Redis
-func (c *RedisCache) Set(key string, value interface{}, expires ...int) error {
-	_key := fmt.Sprintf("%s:%s", c.Prefix, key)
-	conn := c.Connect.Get()
+func (c *RedisCache) Set(str string, value interface{}, expires ...int) error {
+	key := fmt.Sprintf("%s:%s", c.Prefix, str)
+	conn := c.Connection.Get()
 	defer conn.Close()
 
 	entry := Entry{}
-	entry[_key] = value
+	entry[key] = value
 	encoded, err := encode(entry)
 	if err != nil {
 		return err
 	}
 
 	if len(expires) > 0 {
-		_, err = conn.Do("SEMTEX", _key, expires[0], string(encoded))
+		_, err := conn.Do("SETEX", key, expires[0], string(encoded))
 		if err != nil {
 			return err
 		}
 	} else {
-		_, err = conn.Do("SET", _key, string(encoded))
+		_, err := conn.Do("SET", key, string(encoded))
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
 //Delete : Delete a key value in Redis.
-func (c *RedisCache) Delete(key string) error {
-	_key := fmt.Sprintf("%s:%s", c.Prefix, key)
-	conn := c.Connect.Get()
+func (c *RedisCache) Delete(str string) error {
+	key := fmt.Sprintf("%s:%s", c.Prefix, str)
+	conn := c.Connection.Get()
 	defer conn.Close()
-	_, err := conn.Do("DELETE", _key)
 
+	_, err := conn.Do("DEL", key)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 //DeleteIfMatch : Delete a key values where match the with the key value
-func (c *RedisCache) DeleteIfMatch(key string) error {
-	_key := fmt.Sprintf("%s:%s", c.Prefix, key)
-	keys, err := c.getKeys(_key)
+func (c *RedisCache) DeleteIfMatch(str string) error {
+	key := fmt.Sprintf("%s:%s", c.Prefix, str)
+	conn := c.Connection.Get()
+	defer conn.Close()
+
+	keys, err := c.getKeys(key)
 	if err != nil {
 		return err
 	}
-	for _, i := range keys {
-		err := c.Delete(i)
+
+	for _, x := range keys {
+		_, err := conn.Do("DEL", x)
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
-//Empty : Delete all entries from redis.
-func (c *RedisCache) Empty() error {
-	_keys := fmt.Sprintf("%s:", c.Prefix)
-	conn := c.Connect.Get()
+//Clean : Delete all entries from redis.
+func (c *RedisCache) Clean() error {
+	key := fmt.Sprintf("%s:", c.Prefix)
+	conn := c.Connection.Get()
 	defer conn.Close()
-	keys, err := c.getKeys(_keys)
+
+	keys, err := c.getKeys(key)
 	if err != nil {
 		return err
 	}
-	for _, i := range keys {
-		err := c.Delete(i)
+
+	for _, x := range keys {
+		_, err := conn.Do("DEL", x)
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
 //getKeys : Return all keys that match to the pattern.
 func (c *RedisCache) getKeys(pattern string) ([]string, error) {
-	conn := c.Connect.Get()
+	conn := c.Connection.Get()
 	defer conn.Close()
+
 	iter := 0
 	var keys []string
+
 	for {
 		arr, err := redis.Values(conn.Do("SCAN", iter, "MATCH", fmt.Sprintf("%s*", pattern)))
 		if err != nil {
 			return keys, err
 		}
+
 		iter, _ = redis.Int(arr[0], nil)
 		k, _ := redis.Strings(arr[1], nil)
 		keys = append(keys, k...)
@@ -169,7 +187,6 @@ func (c *RedisCache) getKeys(pattern string) ([]string, error) {
 		if iter == 0 {
 			break
 		}
-
 	}
 
 	return keys, nil
