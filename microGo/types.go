@@ -24,3 +24,11 @@ type Database struct {
 	DatabaseType string
 	Pool         *sql.DB
 }
+
+type redisConfig struct {
+	host     string
+	port     string
+	username string
+	password string
+	prefix   string
+}

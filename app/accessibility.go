@@ -11,7 +11,7 @@ func (a *application) get(s string, h http.HandlerFunc) {
 
 //get helper function for app post request.
 func (a *application) post(s string, h http.HandlerFunc) {
-	a.App.Routes.Get(s, h)
+	a.App.Routes.Post(s, h)
 
 }
 

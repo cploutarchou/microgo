@@ -26,6 +26,12 @@ func (a *application) routes() *chi.Mux {
 	a.get("/xml", a.Handlers.XML)
 	a.get("/download", a.Handlers.Download)
 	a.get("/encryption", a.Handlers.TestEncryption)
+	a.get("/cache-test", a.Handlers.ShowCachePage)
+	a.get("/cache-test", a.Handlers.ShowCachePage)
+	a.post("/api/save-in-cache", a.Handlers.SaveInCache)
+	a.post("/api/get-from-cache", a.Handlers.GetFromCache)
+	a.post("/api/delete-from-cache", a.Handlers.DeleteFromCache)
+	a.post("/api/empty-cache", a.Handlers.EmptyCache)
 	a.App.Routes.Post("/form", a.Handlers.PostForm)
 	a.get("/create_user", func(writer http.ResponseWriter, request *http.Request) {
 		u := data.User{
