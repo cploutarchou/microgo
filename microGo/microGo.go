@@ -20,6 +20,8 @@ import (
 
 const version = "1.0.0"
 
+var redisCache *cache.RedisCache
+
 // MicroGo is the overall type for the MicroGo package. Members that are exported in this type
 // are available to any application that uses it.
 type MicroGo struct {
@@ -93,8 +95,8 @@ func (m *MicroGo) New(rootPath string) error {
 			Pool:         db,
 		}
 	}
-	if os.Getenv("CACHE") == "redis" {
-		redisCache := m.createRedisCacheClient()
+	if os.Getenv("CACHE") == "redis" || os.Getenv("SESSION_CACHE") == "redis" {
+		redisCache = m.createRedisCacheClient()
 		m.Cache = redisCache
 	}
 	m.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
@@ -133,6 +135,14 @@ func (m *MicroGo) New(rootPath string) error {
 		CookieDomain:   m.config.cookie.domain,
 		DBPool:         m.DB.Pool,
 	}
+	switch m.config.sessionType {
+
+	case "redis":
+		_session.RedisPool = redisCache.Connection
+	case "mysql", "mariadb", "postgres", "postgresql":
+		_session.DBPool = m.DB.Pool
+	}
+
 	m.Session = _session.InitializeSession()
 	m.EncryptionKey = os.Getenv("ENCRYPTION_KEY")
 
