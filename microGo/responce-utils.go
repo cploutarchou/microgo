@@ -78,7 +78,7 @@ func (m *MicroGo) SentFile(w http.ResponseWriter, r *http.Request, fileLocation,
 //Error404 : Return Not Found HTTP response .
 //
 //Status Code : 404
-func (m *MicroGo) Error404(w http.ResponseWriter) {
+func (m *MicroGo) Error404(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusNotFound)
 }
 
@@ -93,21 +93,21 @@ func (m *MicroGo) Error500(w http.ResponseWriter, r *http.Request) {
 //ErrorUnauthorized : Return Unauthorized response on request error.
 //
 //Status Code : 401
-func (m *MicroGo) ErrorUnauthorized(w http.ResponseWriter) {
+func (m *MicroGo) ErrorUnauthorized(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusUnauthorized)
 }
 
 //ErrorForbidden : Return StatusForbidden HTTP response.
 //
 //Status Code : 403
-func (m *MicroGo) ErrorForbidden(w http.ResponseWriter) {
+func (m *MicroGo) ErrorForbidden(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusForbidden)
 }
 
 //ErrorUnprocessable : Return Unprocessable entity HTTP response.
 //
 //Status Code 422.
-func (m *MicroGo) ErrorUnprocessable(w http.ResponseWriter) {
+func (m *MicroGo) ErrorUnprocessable(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusUnprocessableEntity)
 }
 
