@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
+	"github.com/justinas/nosurf"
 	"html/template"
 	"log"
 	"net/http"
@@ -37,6 +38,7 @@ func (r *Render) DefaultData(templateData *TemplateData, request *http.Request) 
 	templateData.Secure = r.Secure
 	templateData.ServerName = r.ServerName
 	templateData.Port = r.Port
+	templateData.CSRFToken = nosurf.Token(request)
 	if r.Session.Exists(request.Context(), "userID") {
 		templateData.IsAuthenticated = true
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"net/http"
+	"time"
 )
 
 type Handlers struct {
@@ -15,6 +16,7 @@ type Handlers struct {
 
 // Home Request Handler for home package.
 func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
+	defer h.APP.LoadTime(time.Now())
 	err := h.render(w, r, "home", nil, nil)
 	if err != nil {
 		h.APP.ErrorLog.Println("Unable to render page :", err)
@@ -94,7 +96,7 @@ func (h *Handlers) TestEncryption(w http.ResponseWriter, r *http.Request) {
 	encrypted, err := h.encrypt(plaintext)
 	if err != nil {
 		h.APP.ErrorLog.Println(err)
-		h.APP.ErrorUnprocessable(w)
+		h.APP.ErrorUnprocessable(w, r)
 		return
 	}
 
@@ -103,7 +105,7 @@ func (h *Handlers) TestEncryption(w http.ResponseWriter, r *http.Request) {
 	decrypted, err := h.decrypt(encrypted)
 	if err != nil {
 		h.APP.ErrorLog.Println(err)
-		h.APP.ErrorUnprocessable(w)
+		h.APP.ErrorUnprocessable(w, r)
 		return
 	}
 	fmt.Fprint(w, "Decrypted : "+decrypted+"\n")

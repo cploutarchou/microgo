@@ -145,13 +145,20 @@ func (m *MicroGo) New(rootPath string) error {
 
 	m.Session = _session.InitializeSession()
 	m.EncryptionKey = os.Getenv("ENCRYPTION_KEY")
+	if m.Debug {
+		var views = jet.NewSet(
+			jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", rootPath)),
+			jet.InDevelopmentMode(),
+		)
+		m.JetView = views
+	} else {
+		var views = jet.NewSet(
+			jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", rootPath)),
+		)
 
-	var views = jet.NewSet(
-		jet.NewOSFileSystemLoader(fmt.Sprintf("%s/views", rootPath)),
-		jet.InDevelopmentMode(),
-	)
+		m.JetView = views
+	}
 
-	m.JetView = views
 	m.createRenderer()
 
 	return nil

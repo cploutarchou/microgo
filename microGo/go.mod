@@ -20,6 +20,7 @@ require (
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/joho/godotenv v1.3.0
+	github.com/justinas/nosurf v1.1.1
 )
 
 require (
