@@ -94,7 +94,7 @@ func (h *Handlers) TestEncryption(w http.ResponseWriter, r *http.Request) {
 	encrypted, err := h.encrypt(plaintext)
 	if err != nil {
 		h.APP.ErrorLog.Println(err)
-		h.APP.ErrorUnprocessable(w)
+		h.APP.ErrorUnprocessable(w, r)
 		return
 	}
 
@@ -103,7 +103,7 @@ func (h *Handlers) TestEncryption(w http.ResponseWriter, r *http.Request) {
 	decrypted, err := h.decrypt(encrypted)
 	if err != nil {
 		h.APP.ErrorLog.Println(err)
-		h.APP.ErrorUnprocessable(w)
+		h.APP.ErrorUnprocessable(w, r)
 		return
 	}
 	fmt.Fprint(w, "Decrypted : "+decrypted+"\n")

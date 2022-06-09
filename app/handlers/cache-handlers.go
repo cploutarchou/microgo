@@ -1,6 +1,9 @@
 package handlers
 
-import "net/http"
+import (
+	"github.com/justinas/nosurf"
+	"net/http"
+)
 
 func (h *Handlers) ShowCachePage(w http.ResponseWriter, r *http.Request) {
 	err := h.render(w, r, "cache", nil, nil)
@@ -21,7 +24,10 @@ func (h *Handlers) SaveInCache(w http.ResponseWriter, r *http.Request) {
 		h.APP.Error500(w, r)
 		return
 	}
-
+	if !nosurf.VerifyToken(nosurf.Token(r), userInput.CSRF) {
+		h.APP.ErrorUnprocessable(w, r)
+		return
+	}
 	err = h.APP.Cache.Set(userInput.Name, userInput.Value)
 	if err != nil {
 		h.APP.Error500(w, r)
@@ -53,7 +59,10 @@ func (h *Handlers) GetFromCache(w http.ResponseWriter, r *http.Request) {
 		h.APP.Error500(w, r)
 		return
 	}
-
+	if !nosurf.VerifyToken(nosurf.Token(r), userInput.CSRF) {
+		h.APP.ErrorUnprocessable(w, r)
+		return
+	}
 	fromCache, err := h.APP.Cache.Get(userInput.Name)
 	if err != nil {
 		msg = "Not found in cache!"
@@ -88,7 +97,10 @@ func (h *Handlers) DeleteFromCache(w http.ResponseWriter, r *http.Request) {
 		h.APP.Error500(w, r)
 		return
 	}
-
+	if !nosurf.VerifyToken(nosurf.Token(r), userInput.CSRF) {
+		h.APP.ErrorUnprocessable(w, r)
+		return
+	}
 	err = h.APP.Cache.Delete(userInput.Name)
 	if err != nil {
 		h.APP.Error500(w, r)
@@ -115,7 +127,10 @@ func (h *Handlers) EmptyCache(w http.ResponseWriter, r *http.Request) {
 		h.APP.Error500(w, r)
 		return
 	}
-
+	if !nosurf.VerifyToken(nosurf.Token(r), userInput.CSRF) {
+		h.APP.ErrorUnprocessable(w, r)
+		return
+	}
 	err = h.APP.Cache.Clean()
 	if err != nil {
 		h.APP.Error500(w, r)
