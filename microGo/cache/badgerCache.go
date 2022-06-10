@@ -10,16 +10,14 @@ type BadgerCache struct {
 	Prefix     string
 }
 
-//Exists :  Check if the key exists
 func (b *BadgerCache) Exists(str string) (bool, error) {
 	_, err := b.Get(str)
 	if err != nil {
-		return false, err
+		return false, nil
 	}
 	return true, nil
 }
 
-//Get : Return Key values from Redis if it exists.
 func (b *BadgerCache) Get(str string) (interface{}, error) {
 	var fromCache []byte
 	err := b.Connection.View(func(txn *badger.Txn) error {
@@ -32,7 +30,7 @@ func (b *BadgerCache) Get(str string) (interface{}, error) {
 			return nil
 		})
 		if err != nil {
-			return nil
+			return err
 		}
 		return nil
 	})
@@ -43,10 +41,10 @@ func (b *BadgerCache) Get(str string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return decoded[str], nil
+	item := decoded[str]
+	return item, nil
 }
 
-//Set : Set a key value in Redis
 func (b *BadgerCache) Set(str string, value interface{}, expires ...int) error {
 	entry := Entry{}
 	entry[str] = value
@@ -70,7 +68,6 @@ func (b *BadgerCache) Set(str string, value interface{}, expires ...int) error {
 	return nil
 }
 
-//Delete : Delete a key value in Redis.
 func (b *BadgerCache) Delete(str string) error {
 	err := b.Connection.Update(func(txn *badger.Txn) error {
 		err := txn.Delete([]byte(str))
@@ -80,17 +77,14 @@ func (b *BadgerCache) Delete(str string) error {
 	return err
 }
 
-//DeleteIfMatch : Delete a key values where match the with the key value
 func (b *BadgerCache) DeleteIfMatch(str string) error {
 	return b.deleteIfMatch(str)
 }
 
-//Clean : Delete all entries from redis.
 func (b *BadgerCache) Clean() error {
 	return b.deleteIfMatch("")
 }
 func (b *BadgerCache) deleteIfMatch(str string) error {
-
 	deleteKeys := func(keysForDelete [][]byte) error {
 		if err := b.Connection.Update(func(txn *badger.Txn) error {
 			for _, key := range keysForDelete {
@@ -112,6 +106,7 @@ func (b *BadgerCache) deleteIfMatch(str string) error {
 		opts.AllVersions = false
 		opts.PrefetchValues = false
 		it := txn.NewIterator(opts)
+		defer it.Close()
 
 		keysForDelete := make([][]byte, 0, collectSize)
 		keysCollected := 0
