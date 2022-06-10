@@ -11,3 +11,4 @@ app/migrations
 app/tmp
 app/vendor
 app/migrations/*.sql
+microGo/cache/testdata/tmp/badger/*
