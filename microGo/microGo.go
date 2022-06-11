@@ -8,9 +8,11 @@ import (
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
+	"github.com/dgraph-io/badger/v3"
 	"github.com/go-chi/chi/v5"
 	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 	"log"
 	"net/http"
 	"os"
@@ -20,7 +22,10 @@ import (
 
 const version = "1.0.0"
 
-var redisCache *cache.RedisCache
+var (
+	redisCache  *cache.RedisCache
+	badgerCache *cache.BadgerCache
+)
 
 // MicroGo is the overall type for the MicroGo package. Members that are exported in this type
 // are available to any application that uses it.
@@ -41,6 +46,7 @@ type MicroGo struct {
 	DB            Database
 	EncryptionKey string
 	Cache         cache.Cache
+	Scheduler     *cron.Cron
 }
 
 type config struct {
@@ -98,6 +104,17 @@ func (m *MicroGo) New(rootPath string) error {
 	if os.Getenv("CACHE") == "redis" || os.Getenv("SESSION_CACHE") == "redis" {
 		redisCache = m.createRedisCacheClient()
 		m.Cache = redisCache
+	}
+	if os.Getenv("CACHE") == "badger" {
+		badgerCache = m.createBadgerCacheClient()
+		m.Cache = badgerCache
+
+		_, err = m.Scheduler.AddFunc("@daily", func() {
+			_ = badgerCache.Connection.RunValueLogGC(0.7)
+		})
+		if err != nil {
+			return err
+		}
 	}
 	m.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	m.Version = version
@@ -285,4 +302,17 @@ func (m *MicroGo) createRedisCacheClient() *cache.RedisCache {
 		Prefix:     m.config.redis.prefix,
 	}
 	return &_client
+}
+func (m *MicroGo) createBadgerCacheClient() *cache.BadgerCache {
+	cacheClient := cache.BadgerCache{
+		Connection: m.connectToBadgerCache(),
+	}
+	return &cacheClient
+}
+func (m *MicroGo) connectToBadgerCache() *badger.DB {
+	db, err := badger.Open(badger.DefaultOptions(m.RootPath + "/tmp/badger"))
+	if err != nil {
+		return nil
+	}
+	return db
 }
