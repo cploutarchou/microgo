@@ -8,9 +8,11 @@ import (
 	"fmt"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
+	"github.com/dgraph-io/badger/v3"
 	"github.com/go-chi/chi/v5"
 	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 	"log"
 	"net/http"
 	"os"
@@ -20,7 +22,12 @@ import (
 
 const version = "1.0.0"
 
-var redisCache *cache.RedisCache
+var (
+	redisCache       *cache.RedisCache
+	badgerCache      *cache.BadgerCache
+	redisPool        *redis.Pool
+	badgerConnection *badger.DB
+)
 
 // MicroGo is the overall type for the MicroGo package. Members that are exported in this type
 // are available to any application that uses it.
@@ -41,6 +48,7 @@ type MicroGo struct {
 	DB            Database
 	EncryptionKey string
 	Cache         cache.Cache
+	Scheduler     *cron.Cron
 }
 
 type config struct {
@@ -95,9 +103,26 @@ func (m *MicroGo) New(rootPath string) error {
 			Pool:         db,
 		}
 	}
-	if os.Getenv("CACHE") == "redis" || os.Getenv("SESSION_CACHE") == "redis" {
+	scheduler := cron.New()
+	m.Scheduler = scheduler
+
+	if os.Getenv("CACHE") == "redis" || os.Getenv("SESSION_TYPE") == "redis" {
 		redisCache = m.createRedisCacheClient()
 		m.Cache = redisCache
+		redisPool = redisCache.Connection
+	}
+
+	if os.Getenv("CACHE") == "badger" {
+		badgerCache = m.createBadgerCacheClient()
+		m.Cache = badgerCache
+		badgerConnection = badgerCache.Connection
+
+		_, err = m.Scheduler.AddFunc("@daily", func() {
+			_ = badgerCache.Connection.RunValueLogGC(0.7)
+		})
+		if err != nil {
+			return err
+		}
 	}
 	m.Debug, _ = strconv.ParseBool(os.Getenv("DEBUG"))
 	m.Version = version
@@ -136,7 +161,6 @@ func (m *MicroGo) New(rootPath string) error {
 		DBPool:         m.DB.Pool,
 	}
 	switch m.config.sessionType {
-
 	case "redis":
 		_session.RedisPool = redisCache.Connection
 	case "mysql", "mariadb", "postgres", "postgresql":
@@ -187,14 +211,31 @@ func (m *MicroGo) ListenAndServe() {
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 600 * time.Second,
 	}
+	if m.DB.Pool != nil {
+		defer func(Pool *sql.DB) {
+			err := Pool.Close()
+			if err != nil {
+				m.WarningLog.Println(err)
+			}
+		}(m.DB.Pool)
+	}
 
-	defer func(Pool *sql.DB) {
-		err := Pool.Close()
-		if err != nil {
-			m.ErrorLog.Println(err)
-			return
-		}
-	}(m.DB.Pool)
+	if redisPool != nil {
+		defer func(redisPool *redis.Pool) {
+			err := redisPool.Close()
+			if err != nil {
+				m.WarningLog.Println(err)
+			}
+		}(redisPool)
+	}
+	if badgerConnection != nil {
+		defer func(badgerConnection *badger.DB) {
+			err := badgerConnection.Close()
+			if err != nil {
+				m.WarningLog.Println(err)
+			}
+		}(badgerConnection)
+	}
 	m.InfoLog.Printf("Listening on port %s", os.Getenv("PORT"))
 	err := srv.ListenAndServe()
 	m.ErrorLog.Fatal(err)
@@ -285,4 +326,17 @@ func (m *MicroGo) createRedisCacheClient() *cache.RedisCache {
 		Prefix:     m.config.redis.prefix,
 	}
 	return &_client
+}
+func (m *MicroGo) createBadgerCacheClient() *cache.BadgerCache {
+	cacheClient := cache.BadgerCache{
+		Connection: m.connectToBadgerCache(),
+	}
+	return &cacheClient
+}
+func (m *MicroGo) connectToBadgerCache() *badger.DB {
+	db, err := badger.Open(badger.DefaultOptions(m.RootPath + "/tmp/badger"))
+	if err != nil {
+		return nil
+	}
+	return db
 }
