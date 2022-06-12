@@ -23,8 +23,10 @@ import (
 const version = "1.0.0"
 
 var (
-	redisCache  *cache.RedisCache
-	badgerCache *cache.BadgerCache
+	redisCache       *cache.RedisCache
+	badgerCache      *cache.BadgerCache
+	redisPool        *redis.Pool
+	badgerConnection *badger.DB
 )
 
 // MicroGo is the overall type for the MicroGo package. Members that are exported in this type
@@ -101,13 +103,19 @@ func (m *MicroGo) New(rootPath string) error {
 			Pool:         db,
 		}
 	}
-	if os.Getenv("CACHE") == "redis" || os.Getenv("SESSION_CACHE") == "redis" {
+	scheduler := cron.New()
+	m.Scheduler = scheduler
+
+	if os.Getenv("CACHE") == "redis" || os.Getenv("SESSION_TYPE") == "redis" {
 		redisCache = m.createRedisCacheClient()
 		m.Cache = redisCache
+		redisPool = redisCache.Connection
 	}
+
 	if os.Getenv("CACHE") == "badger" {
 		badgerCache = m.createBadgerCacheClient()
 		m.Cache = badgerCache
+		badgerConnection = badgerCache.Connection
 
 		_, err = m.Scheduler.AddFunc("@daily", func() {
 			_ = badgerCache.Connection.RunValueLogGC(0.7)
@@ -153,7 +161,6 @@ func (m *MicroGo) New(rootPath string) error {
 		DBPool:         m.DB.Pool,
 	}
 	switch m.config.sessionType {
-
 	case "redis":
 		_session.RedisPool = redisCache.Connection
 	case "mysql", "mariadb", "postgres", "postgresql":
@@ -204,14 +211,31 @@ func (m *MicroGo) ListenAndServe() {
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 600 * time.Second,
 	}
+	if m.DB.Pool != nil {
+		defer func(Pool *sql.DB) {
+			err := Pool.Close()
+			if err != nil {
+				m.WarningLog.Println(err)
+			}
+		}(m.DB.Pool)
+	}
 
-	defer func(Pool *sql.DB) {
-		err := Pool.Close()
-		if err != nil {
-			m.ErrorLog.Println(err)
-			return
-		}
-	}(m.DB.Pool)
+	if redisPool != nil {
+		defer func(redisPool *redis.Pool) {
+			err := redisPool.Close()
+			if err != nil {
+				m.WarningLog.Println(err)
+			}
+		}(redisPool)
+	}
+	if badgerConnection != nil {
+		defer func(badgerConnection *badger.DB) {
+			err := badgerConnection.Close()
+			if err != nil {
+				m.WarningLog.Println(err)
+			}
+		}(badgerConnection)
+	}
 	m.InfoLog.Printf("Listening on port %s", os.Getenv("PORT"))
 	err := srv.ListenAndServe()
 	m.ErrorLog.Fatal(err)
