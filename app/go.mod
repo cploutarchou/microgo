@@ -23,6 +23,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/Microsoft/hcsshim v0.9.3 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
+	github.com/ainsleyclark/go-mail v1.1.1 // indirect
 	github.com/alexedwards/scs/mysqlstore v0.0.0-20220528130143-d93ace5be94b // indirect
 	github.com/alexedwards/scs/postgresstore v0.0.0-20220528130143-d93ace5be94b // indirect
 	github.com/alexedwards/scs/redisstore v0.0.0-20220528130143-d93ace5be94b // indirect
