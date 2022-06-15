@@ -2,6 +2,7 @@ package microGo
 
 import (
 	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/cache"
+	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/mailer"
 	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/render"
 	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/session"
 	"database/sql"
@@ -49,6 +50,7 @@ type MicroGo struct {
 	EncryptionKey string
 	Cache         cache.Cache
 	Scheduler     *cron.Cron
+	Mailer        mailer.Mailer
 }
 
 type config struct {
@@ -65,7 +67,7 @@ type config struct {
 func (m *MicroGo) New(rootPath string) error {
 	pathConfig := initPaths{
 		rootPath:    rootPath,
-		folderNames: []string{"handlers", "migrations", "views", "data", "public", "tmp", "logs", "middleware"},
+		folderNames: []string{"handlers", "migrations", "views", "mail", "data", "public", "tmp", "logs", "middleware"},
 	}
 
 	err := m.Init(pathConfig)
@@ -83,7 +85,8 @@ func (m *MicroGo) New(rootPath string) error {
 	if err != nil {
 		return err
 	}
-
+	// initiate mailer
+	m.Mailer = m.createMailer()
 	// initiate the  loggers
 	infoLog, errorLog, warnLog, buildLog := m.startLoggers()
 	m.InfoLog = infoLog
@@ -184,7 +187,7 @@ func (m *MicroGo) New(rootPath string) error {
 	}
 
 	m.createRenderer()
-
+	go m.Mailer.ListenForMessage()
 	return nil
 }
 
@@ -272,6 +275,28 @@ func (m *MicroGo) createRenderer() {
 		Session:  m.Session,
 	}
 	m.Render = &renderer
+}
+
+//createRenderer Create a Renderer for microGo application.
+func (m *MicroGo) createMailer() mailer.Mailer {
+	port, _ := strconv.Atoi(os.Getenv("SMTP_PORT"))
+	_mailer := mailer.Mailer{
+		Domain:      os.Getenv("MAIL_DOMAIN"),
+		Templates:   m.RootPath + "/mail",
+		Host:        os.Getenv("SMTP_HOST"),
+		Port:        port,
+		Username:    os.Getenv("SMTP_USERNAME"),
+		Password:    os.Getenv("SMTP_PASSWORD"),
+		Encryption:  os.Getenv("SMTP_ENCRYPTION"),
+		FromAddress: os.Getenv("FROM_ADDRESS"),
+		FromName:    os.Getenv("FROM_NAME"),
+		Jobs:        make(chan mailer.Message, 20),
+		Results:     make(chan mailer.Result, 20),
+		API:         os.Getenv("MAILER_API"),
+		ApiKey:      os.Getenv("MAILER_KEY"),
+		ApiUrl:      os.Getenv("MAILER_URL"),
+	}
+	return _mailer
 }
 
 // BuildDataSourceName builds the datasource name for our database, and returns it as a string
