@@ -3,9 +3,13 @@ package mailer
 import (
 	"bytes"
 	"fmt"
+	"github.com/ainsleyclark/go-mail/drivers"
+	"github.com/ainsleyclark/go-mail/mail"
 	"github.com/vanng822/go-premailer/premailer"
-	"github.com/xhit/go-simple-mail/v2"
+	defaultMail "github.com/xhit/go-simple-mail/v2"
 	"html/template"
+	"io/ioutil"
+	"path/filepath"
 	"time"
 )
 
@@ -23,7 +27,7 @@ type Mailer struct {
 	Results     chan Result
 	API         string
 	ApiKey      string
-	ApiUr       string
+	ApiUrl      string
 }
 type Message struct {
 	From        string
@@ -47,21 +51,18 @@ func (m *Mailer) ListenForMessage() {
 		msg := <-m.Jobs
 		err := m.Send(msg)
 		if err != nil {
-			m.Results <- Result{
-				Success: false,
-				Error:   err,
-			}
+			m.Results <- Result{Success: false, Error: err}
 		} else {
-			m.Results <- Result{
-				Success: true,
-				Error:   nil,
-			}
+			m.Results <- Result{Success: true, Error: nil}
 		}
 	}
 }
 
 func (m *Mailer) Send(msg Message) error {
 	// TODO: SMTP OR API Server support.
+	if len(m.API) > 0 && len(m.ApiKey) > 0 && len(m.ApiUrl) > 0 && m.API != "smtp" {
+		//m.SelectAPI(msg)
+	}
 	return m.SentSMTPMessage(msg)
 }
 
@@ -75,7 +76,7 @@ func (m *Mailer) SentSMTPMessage(msg Message) error {
 		return err
 	}
 
-	svr := mail.NewSMTPClient()
+	svr := defaultMail.NewSMTPClient()
 	svr.Host = m.Host
 	svr.Port = m.Port
 	svr.Username = m.Username
@@ -89,10 +90,10 @@ func (m *Mailer) SentSMTPMessage(msg Message) error {
 		return err
 	}
 
-	email := mail.NewMSG()
+	email := defaultMail.NewMSG()
 	email.SetFrom(msg.From).AddTo(msg.To).SetSubject(msg.Subject)
-	email.SetBody(mail.TextHTML, formattedMessage)
-	email.AddAlternative(mail.TextPlain, plainMessage)
+	email.SetBody(defaultMail.TextHTML, formattedMessage)
+	email.AddAlternative(defaultMail.TextPlain, plainMessage)
 	if len(msg.Attachments) > 0 {
 		for _, x := range msg.Attachments {
 			email.AddAttachment(x)
@@ -146,16 +147,16 @@ func (m *Mailer) createPlanMessage(msg Message) (string, error) {
 	return plainMSG, nil
 }
 
-func (m *Mailer) getEncryption(str string) mail.Encryption {
+func (m *Mailer) getEncryption(str string) defaultMail.Encryption {
 	switch str {
 	case "tls":
-		return mail.EncryptionSTARTTLS
+		return defaultMail.EncryptionSTARTTLS
 	case "ssl":
-		return mail.EncryptionSSL
+		return defaultMail.EncryptionSSL
 	case "none":
-		return mail.EncryptionNone
+		return defaultMail.EncryptionNone
 	default:
-		return mail.EncryptionSTARTTLS
+		return defaultMail.EncryptionSTARTTLS
 	}
 }
 
@@ -174,4 +175,106 @@ func (m *Mailer) inlineCSS(str string) (string, error) {
 		return "", err
 	}
 	return newHtml, nil
+}
+
+func (m *Mailer) SelectAPI(msg Message) error {
+	switch m.API {
+	case "mailgun", "sparkpost", "sendgrid", "postal", "postmark":
+		return m.SendViaAPI(msg, m.API)
+	default:
+		return fmt.Errorf("Not supported api: %s ", m.API)
+	}
+
+}
+
+func (m *Mailer) SendViaAPI(msg Message, transport string) error {
+	if msg.From == "" {
+		msg.From = m.FromAddress
+	}
+
+	if msg.FromName == "" {
+		msg.FromName = m.FromName
+	}
+
+	cfg := mail.Config{
+		URL:         m.ApiUrl,
+		APIKey:      m.ApiKey,
+		Domain:      m.Domain,
+		FromAddress: msg.From,
+		FromName:    msg.FromName,
+	}
+
+	formattedMessage, err := m.createHTMLMessage(msg)
+	if err != nil {
+		return err
+	}
+
+	plainMessage, err := m.createPlanMessage(msg)
+	if err != nil {
+		return err
+	}
+
+	tx := &mail.Transmission{
+		Recipients: []string{msg.To},
+		Subject:    msg.Subject,
+		HTML:       formattedMessage,
+		PlainText:  plainMessage,
+	}
+	_mailer, err := m.SelectAPIDriver(transport, cfg)
+	if err != nil {
+		return err
+	}
+	// add attachments
+	err = m.addAPIAttachments(msg, tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = _mailer.Send(tx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Mailer) SelectAPIDriver(transport string, config mail.Config) (mail.Mailer, error) {
+	switch transport {
+	case "sparkpost":
+		return drivers.NewSparkPost(config)
+	case "mailgun":
+		return drivers.NewMailgun(config)
+	case "postal":
+		return drivers.NewPostal(config)
+	case "postmark":
+		return drivers.NewPostmark(config)
+	case "sendgrid":
+		return drivers.NewSendGrid(config)
+	default:
+		return nil, fmt.Errorf("No valid transport specified : %s ", transport)
+	}
+	return nil, nil
+}
+
+func (m *Mailer) addAPIAttachments(msg Message, tx *mail.Transmission) error {
+	if len(msg.Attachments) > 0 {
+		var attachments []mail.Attachment
+
+		for _, x := range msg.Attachments {
+			var attach mail.Attachment
+			content, err := ioutil.ReadFile(x)
+			if err != nil {
+				return err
+			}
+
+			fileName := filepath.Base(x)
+			attach.Bytes = content
+			attach.Filename = fileName
+			attachments = append(attachments, attach)
+		}
+
+		tx.Attachments = attachments
+	}
+
+	return nil
 }

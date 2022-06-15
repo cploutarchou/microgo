@@ -23,14 +23,14 @@ require (
 	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/Microsoft/hcsshim v0.9.3 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
-	github.com/PuerkitoBio/goquery v1.5.1 // indirect
+	github.com/PuerkitoBio/goquery v1.8.0 // indirect
 	github.com/SparkPost/gosparkpost v0.2.0 // indirect
-	github.com/ainsleyclark/go-mail v1.0.3 // indirect
+	github.com/ainsleyclark/go-mail v1.1.1 // indirect
 	github.com/alexedwards/scs/mysqlstore v0.0.0-20220528130143-d93ace5be94b // indirect
 	github.com/alexedwards/scs/postgresstore v0.0.0-20220528130143-d93ace5be94b // indirect
 	github.com/alexedwards/scs/redisstore v0.0.0-20220528130143-d93ace5be94b // indirect
 	github.com/alexedwards/scs/v2 v2.5.0 // indirect
-	github.com/andybalholm/cascadia v1.1.0 // indirect
+	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
