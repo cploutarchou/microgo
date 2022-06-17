@@ -85,8 +85,7 @@ func (m *MicroGo) New(rootPath string) error {
 	if err != nil {
 		return err
 	}
-	// initiate mailer
-	m.Mailer = m.createMailer()
+
 	// initiate the  loggers
 	infoLog, errorLog, warnLog, buildLog := m.startLoggers()
 	m.InfoLog = infoLog
@@ -131,7 +130,8 @@ func (m *MicroGo) New(rootPath string) error {
 	m.Version = version
 	m.RootPath = rootPath
 	m.Routes = m.routes().(*chi.Mux)
-
+	// initiate mailer
+	m.Mailer = m.createMailer()
 	m.config = config{
 		port:     os.Getenv("PORT"),
 		renderer: os.Getenv("RENDERER"),

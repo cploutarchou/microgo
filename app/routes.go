@@ -2,6 +2,7 @@ package main
 
 import (
 	"app/data"
+	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/mailer"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net/http"
@@ -32,6 +33,31 @@ func (a *application) routes() *chi.Mux {
 	a.post("/api/get-from-cache", a.Handlers.GetFromCache)
 	a.post("/api/delete-from-cache", a.Handlers.DeleteFromCache)
 	a.post("/api/empty-cache", a.Handlers.EmptyCache)
+	a.get("/test-email", func(w http.ResponseWriter, r *http.Request) {
+		msg := mailer.Message{
+			From:        "your@mail.com",
+			FromName:    "Christos Ploutarchou",
+			To:          "cploutarchou@gmail.com",
+			BCC:         nil,
+			CC:          nil,
+			Subject:     "Test SMTP - Send using channel",
+			Template:    "test",
+			Attachments: nil,
+			Data:        nil,
+		}
+
+		//a.App.Mailer.Jobs <- msg
+		//res := <-a.App.Mailer.Results
+		//if res.Error != nil {
+		//	a.App.ErrorLog.Println(res.Error)
+		//}
+		err := a.App.Mailer.SentSMTPMessage(msg)
+		if err != nil {
+			a.App.ErrorLog.Println(err)
+			return
+		}
+		fmt.Fprint(w, "Email Successfully send!")
+	})
 	a.App.Routes.Post("/form", a.Handlers.PostForm)
 	a.get("/create_user", func(writer http.ResponseWriter, request *http.Request) {
 		u := data.User{
