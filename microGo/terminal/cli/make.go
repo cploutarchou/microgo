@@ -122,6 +122,20 @@ func makeDo(arg2, arg3 string) error {
 		if err != nil {
 			gracefullyExit(err)
 		}
+	case "mail":
+		if arg3 == "" {
+			gracefullyExit(errors.New("You must specify template file name! "))
+		}
+		htmlMail := micro.RootPath + "/mail/" + strings.ToLower(arg3) + ".html.tmpl"
+		plainTextMail := micro.RootPath + "/mail/" + strings.ToLower(arg3) + ".plain.tmpl"
+		err := copyTemplateFile("templates/mailer/mail.html.tmpl", htmlMail)
+		if err != nil {
+			gracefullyExit(err)
+		}
+		err = copyTemplateFile("templates/mailer/mail.plain.tmpl", plainTextMail)
+		if err != nil {
+			gracefullyExit(err)
+		}
 	}
 	return nil
 }
