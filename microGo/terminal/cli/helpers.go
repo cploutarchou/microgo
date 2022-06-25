@@ -91,6 +91,7 @@ func help() {
 	make model <name>     - create a new mode in the data directory
 	make session          - create a new table in the database as a session storage
 	make key              - create a random key of 32 characters.
+	make mail             - create two starter mail templates in the mail directory.
 	
 	`)
 }

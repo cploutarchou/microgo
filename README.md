@@ -21,5 +21,6 @@ ________________________________
 * **make handler handler_name**      - Create a stub handler on handlers directory
 * **make model  model_name**         - Create a new mode in the models directory
 * **make key**                       - Create a random key of 32 characters.
+* **make mail**                      - Create two starter mail templates in the mail directory.
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=EH6BNRFVPZ63N)
