@@ -61,7 +61,7 @@ func (m *Mailer) ListenForMessage() {
 func (m *Mailer) Send(msg Message) error {
 	// TODO: SMTP OR API Server support.
 	if len(m.API) > 0 && len(m.ApiKey) > 0 && len(m.ApiUrl) > 0 && m.API != "smtp" {
-		//m.SelectAPI(msg)
+		return m.SelectAPI(msg)
 	}
 	return m.SentSMTPMessage(msg)
 }
