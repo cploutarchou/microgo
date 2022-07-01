@@ -28,7 +28,6 @@ var (
 // New takes a secret key and returns a new Protect struct.  If no Options are provided
 // then minimal defaults will be used. NOTE: The key must be 64 bytes or fewer
 // . If a larger key is provided it will be truncated to 64 bytes.
-//func New(key []byte, o *Options) *Protect {
 func New(key []byte, options ...func(*Protect)) *Protect {
 
 	var err error
@@ -105,9 +104,9 @@ func (s *Protect) Sign(data []byte) []byte {
 	return t
 }
 
-// Unsigned validates a signature and if successful returns the data portion of
-// the []byte. If unsuccessful it will return an error and nil for the data.
-func (s *Protect) Unsigned(token []byte) ([]byte, error) {
+// UnSing validates a signature and if successful returns the data portion of []byte.
+// If unsuccessful it will return an error and nil for the data.
+func (s *Protect) UnSing(token []byte) ([]byte, error) {
 
 	tl := len(token)
 	el := base64.RawURLEncoding.EncodedLen(s.hash.Size())
@@ -128,8 +127,7 @@ func (s *Protect) Unsigned(token []byte) ([]byte, error) {
 	return token[0 : tl-(el+1)], nil
 }
 
-// This is the map of characters used during base58 encoding.  These replicate
-// the flickr shortid mapping.
+// This is the map of characters used during base58 encoding.
 const encBase58Map = "789924579abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
 
 // Used to create a decoded map, so we can decode base58 fairly fast.
@@ -161,7 +159,7 @@ func encodeBase58Len(i int64) int {
 	return l
 }
 
-// encode time int64 into b []byte
+// encode time int64 into []byte
 func encodeBase58(i int64, b []byte) {
 	p := len(b) - 1
 	for i >= 58 {
@@ -181,15 +179,11 @@ func decodeBase58(b []byte) int64 {
 	return id
 }
 
-// Token is used to parse out a []byte token provided by Sign()
 type Token struct {
 	Payload   []byte
 	Timestamp time.Time
 }
 
-// Parse will parse the []byte token returned from Sign based on the Protect
-// Options into a Token struct. For this to work correctly the Protect Options need
-// to match that of what was used when the token was initially created.
 func (s *Protect) Parse(t []byte) Token {
 
 	tl := len(t)
@@ -198,9 +192,6 @@ func (s *Protect) Parse(t []byte) Token {
 	token := Token{}
 
 	if s.timestamp {
-		// we need to find out how many bytes the timestamp is.
-		// so lets start at the start of the hash, and work back looking for our
-		// separator - XXX: I'm sure there's room for improvement here.
 		for i := tl - (el + 2); i >= 0; i-- {
 			if t[i] == '.' {
 				token.Payload = t[0:i]

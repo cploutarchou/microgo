@@ -25,7 +25,7 @@ func (s *Signer) GenerateToken(data string) string {
 
 func (s *Signer) Verify(token string) bool {
 	crypt := New(s.Secret, Timestamp)
-	_, err := crypt.Unsigned([]byte(token))
+	_, err := crypt.UnSing([]byte(token))
 	if err != nil {
 		return false
 	}
