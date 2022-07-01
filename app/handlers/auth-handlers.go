@@ -129,3 +129,12 @@ func (h *Handlers) Logout(w http.ResponseWriter, r *http.Request) {
 	h.APP.Session.Remove(r.Context(), "userID")
 	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
 }
+
+func (h *Handlers) Forgot(w http.ResponseWriter, r *http.Request) {
+	err := h.render(w, r, "forgot", nil, nil)
+	if err != nil {
+		h.APP.ErrorLog.Println("Something went wrong unable to render page : ", err)
+		h.APP.Error500(w, r)
+	}
+
+}
