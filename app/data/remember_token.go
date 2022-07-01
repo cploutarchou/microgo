@@ -1,8 +1,9 @@
 package data
 
 import (
-	up "github.com/upper/db/v4"
 	"time"
+
+	up "github.com/upper/db/v4"
 )
 
 type RememberToken struct {
@@ -14,7 +15,7 @@ type RememberToken struct {
 }
 
 func (r *RememberToken) Table() string {
-	return "remember_token"
+	return "remember_tokens"
 }
 
 func (r *RememberToken) InsertToken(userID int, token string) error {

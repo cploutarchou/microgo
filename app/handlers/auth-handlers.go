@@ -58,13 +58,13 @@ func (h *Handlers) PostUserLogin(w http.ResponseWriter, r *http.Request) {
 	// Check if user set remember me flag and
 	if r.Form.Get("remember") == "remember" {
 		randomStr := h.createRandomString(12)
-		hasher := sha256.New()
-		_, err := hasher.Write([]byte(randomStr))
+		hashed := sha256.New()
+		_, err := hashed.Write([]byte(randomStr))
 		if err != nil {
 			h.APP.ErrorStatus(w, http.StatusBadRequest)
 			return
 		}
-		sha := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+		sha := base64.URLEncoding.EncodeToString(hashed.Sum(nil))
 		rm := data.RememberToken{}
 		err = rm.InsertToken(user.ID, sha)
 		if err != nil {

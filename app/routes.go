@@ -12,7 +12,7 @@ import (
 //routes The application routes.
 func (a *application) routes() *chi.Mux {
 	// Note : All the middlewares must come before the routes
-
+	a.use(a.Middleware.CheckRemember)
 	// Add routes here
 	a.get("/", a.Handlers.Home)
 	a.get("/go-page", a.Handlers.GoHome)
