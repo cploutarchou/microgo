@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"github.com/CloudyKit/jet/v6"
 	"net/http"
 	"time"
 )
@@ -187,4 +188,39 @@ func (h *Handlers) PostForgot(w http.ResponseWriter, r *http.Request) {
 	}
 	// redirect to login page
 	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
+}
+
+func (h *Handlers) ResetPasswordForm(w http.ResponseWriter, r *http.Request) {
+	// Get the email from the query string
+	email := r.URL.Query().Get("email")
+	theUrl := r.RequestURI
+	testUrl := fmt.Sprintf("%s%s", h.APP.Server.URL, theUrl)
+	// VerifyToken the link
+	signer := url_signer.Signer{
+		Secret: []byte(h.APP.EncryptionKey),
+	}
+	valid := signer.VerifyToken(testUrl)
+	if !valid {
+		h.APP.ErrorLog.Print("Invalid link")
+		h.APP.ErrorUnauthorized(w, r)
+		return
+	}
+	// VerifyToken the link
+	exprired := signer.Expired(testUrl, 60)
+	if exprired {
+		h.APP.ErrorLog.Print("Link expired")
+		h.APP.ErrorUnauthorized(w, r)
+		return
+	}
+	// Display the form
+	encEmail, _ := h.encrypt(email)
+	vars := make(jet.VarMap)
+	vars.Set("email", encEmail)
+
+	err := h.render(w, r, "reset-password", vars, nil)
+	if err != nil {
+		h.APP.ErrorLog.Println("Something went wrong unable to render page : ", err)
+		h.APP.ErrorUnauthorized(w, r)
+	}
+
 }

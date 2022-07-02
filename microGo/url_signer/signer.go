@@ -23,7 +23,7 @@ func (s *Signer) GenerateToken(data string) string {
 	return token
 }
 
-func (s *Signer) Verify(token string) bool {
+func (s *Signer) VerifyToken(token string) bool {
 	crypt := New(s.Secret, Timestamp)
 	_, err := crypt.UnSing([]byte(token))
 	if err != nil {
