@@ -81,7 +81,7 @@ func doAuth() error {
 		gracefullyExit(err)
 	}
 	//Copy over handlers
-	err = copyTemplateFile("templates/handlers/auth-handlers.go.txt", micro.RootPath+"/middleware/auth-handlers.go")
+	err = copyTemplateFile("templates/handlers/auth-handlers.go.txt", micro.RootPath+"/handlers/auth-handlers.go")
 	if err != nil {
 		gracefullyExit(err)
 	}
