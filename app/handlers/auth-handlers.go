@@ -115,12 +115,27 @@ func (h *Handlers) Logout(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteStrictMode,
 	}
 	http.SetCookie(w, &cookie)
-	h.APP.Session.RenewToken(r.Context())
+	err := h.APP.Session.RenewToken(r.Context())
+	if err != nil {
+		_, err := w.Write([]byte(err.Error()))
+		if err != nil {
+			h.APP.ErrorLog.Println(err.Error())
+			return
+		}
+		return
+	}
 	h.APP.Session.Remove(r.Context(), "userID")
 	h.APP.Session.Remove(r.Context(), "remember_token")
-	h.APP.Session.Destroy(r.Context())
-	h.APP.Session.RenewToken(r.Context())
-	err := h.APP.Session.RenewToken(r.Context())
+	err = h.APP.Session.Destroy(r.Context())
+	if err != nil {
+		_, err := w.Write([]byte(err.Error()))
+		if err != nil {
+			h.APP.ErrorLog.Println(err.Error())
+			return
+		}
+		return
+	}
+	err = h.APP.Session.RenewToken(r.Context())
 	if err != nil {
 		_, err := w.Write([]byte(err.Error()))
 		if err != nil {
@@ -142,7 +157,7 @@ func (h *Handlers) Forgot(w http.ResponseWriter, r *http.Request) {
 
 }
 func (h *Handlers) PostForgot(w http.ResponseWriter, r *http.Request) {
-	// parse form data
+	// parse form msgData
 	err := r.ParseForm()
 	if err != nil {
 		h.APP.ErrorStatus(w, http.StatusBadRequest)
@@ -165,18 +180,18 @@ func (h *Handlers) PostForgot(w http.ResponseWriter, r *http.Request) {
 	signed := sign.GenerateToken(link)
 	h.APP.InfoLog.Println("Signed link : ", signed)
 
-	var data struct {
+	var msgData struct {
 		Name string
 		Link string
 	}
-	data.Link = signed
-	data.Name = fmt.Sprintf("%s %s", u.FirstName, u.LastName)
+	msgData.Link = signed
+	msgData.Name = fmt.Sprintf("%s %s", u.FirstName, u.LastName)
 	msg := mailer.Message{
 		To:             u.Email,
 		Subject:        "Reset Password",
 		Template:       "reset-password",
 		TemplateFormat: mailer.HTMLTemplateFormat,
-		Data:           data,
+		Data:           msgData,
 		From:           "christos@cpdevlabs.com",
 	}
 	h.APP.Mailer.Jobs <- msg
@@ -223,4 +238,35 @@ func (h *Handlers) ResetPasswordForm(w http.ResponseWriter, r *http.Request) {
 		h.APP.ErrorUnauthorized(w, r)
 	}
 
+}
+
+func (h *Handlers) PostResetPassword(w http.ResponseWriter, r *http.Request) {
+	// Parse the form data
+	err := r.ParseForm()
+	if err != nil {
+		h.APP.Error500(w, r)
+		return
+	}
+	// Get the email from the query string and decrypt it
+	email, err := h.decrypt(r.Form.Get("email"))
+	if err != nil {
+		h.APP.Error500(w, r)
+		return
+	}
+	// Get the use from the database
+	var u data.User
+	user, err := u.GetByEmail(email)
+	if err != nil {
+		h.APP.Error500(w, r)
+		return
+	}
+	// Reset the password
+	err = user.ResetPassword(user.ID, r.Form.Get("password"))
+	if err != nil {
+		h.APP.Error500(w, r)
+		return
+	}
+	// Redirect to the login page
+	h.APP.Session.Put(r.Context(), "flash", "Your password has been reset. You can now login.")
+	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
 }

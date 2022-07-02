@@ -11,7 +11,11 @@ Login
 
 
 <hr>
-
+{{if .Flash != ""}}
+<div class="alert alert-info text-center">
+    {{.Flash}}
+</div>
+{{end}}
 <form method="post" action="/users/login"
     name="login-form" id="login-form"
     class="d-block needs-validation"
