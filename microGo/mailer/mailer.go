@@ -30,21 +30,28 @@ type Mailer struct {
 	ApiUrl      string
 }
 type Message struct {
-	From        string
-	FromName    string
-	To          string
-	BCC         []string
-	CC          []string
-	Subject     string
-	Template    string
-	Attachments []string
-	Data        interface{}
+	From           string
+	FromName       string
+	To             string
+	BCC            []string
+	CC             []string
+	Subject        string
+	Template       string
+	TemplateFormat TemplateFormat
+	Attachments    []string
+	Data           interface{}
 }
 
 type Result struct {
 	Success bool
 	Error   error
 }
+type TemplateFormat string
+
+const (
+	HTMLTemplateFormat      TemplateFormat = "html"
+	PlainTextTemplateFormat TemplateFormat = "plain/text"
+)
 
 func (m *Mailer) ListenForMessage() {
 	for {
@@ -59,7 +66,6 @@ func (m *Mailer) ListenForMessage() {
 }
 
 func (m *Mailer) Send(msg Message) error {
-	// TODO: SMTP OR API Server support.
 	if len(m.API) > 0 && len(m.ApiKey) > 0 && len(m.ApiUrl) > 0 && m.API != "smtp" {
 		return m.SelectAPI(msg)
 	}
@@ -67,10 +73,12 @@ func (m *Mailer) Send(msg Message) error {
 }
 
 func (m *Mailer) SentSMTPMessage(msg Message) error {
+
 	formattedMessage, err := m.createHTMLMessage(msg)
 	if err != nil {
 		return err
 	}
+
 	plainMessage, err := m.createPlanMessage(msg)
 	if err != nil {
 		return err
@@ -92,8 +100,12 @@ func (m *Mailer) SentSMTPMessage(msg Message) error {
 
 	email := defaultMail.NewMSG()
 	email.SetFrom(msg.From).AddTo(msg.To).SetSubject(msg.Subject)
-	email.SetBody(defaultMail.TextHTML, formattedMessage)
-	email.AddAlternative(defaultMail.TextPlain, plainMessage)
+	if msg.TemplateFormat == HTMLTemplateFormat {
+		email.SetBody(defaultMail.TextHTML, formattedMessage)
+	}
+	if msg.TemplateFormat == PlainTextTemplateFormat {
+		email.AddAlternative(defaultMail.TextPlain, plainMessage)
+	}
 	if len(msg.Attachments) > 0 {
 		for _, x := range msg.Attachments {
 			email.AddAttachment(x)
@@ -210,6 +222,7 @@ func (m *Mailer) SendViaAPI(msg Message, transport string) error {
 	}
 
 	plainMessage, err := m.createPlanMessage(msg)
+
 	if err != nil {
 		return err
 	}
@@ -217,8 +230,12 @@ func (m *Mailer) SendViaAPI(msg Message, transport string) error {
 	tx := &mail.Transmission{
 		Recipients: []string{msg.To},
 		Subject:    msg.Subject,
-		HTML:       formattedMessage,
-		PlainText:  plainMessage,
+	}
+	if msg.TemplateFormat == PlainTextTemplateFormat {
+		tx.PlainText = plainMessage
+	}
+	if msg.TemplateFormat == HTMLTemplateFormat {
+		tx.HTML = formattedMessage
 	}
 	_mailer, err := m.SelectAPIDriver(transport, cfg)
 	if err != nil {
@@ -253,7 +270,6 @@ func (m *Mailer) SelectAPIDriver(transport string, config mail.Config) (mail.Mai
 	default:
 		return nil, fmt.Errorf("No valid transport specified : %s ", transport)
 	}
-	return nil, nil
 }
 
 func (m *Mailer) addAPIAttachments(msg Message, tx *mail.Transmission) error {

@@ -22,7 +22,7 @@ func (a *application) routes() *chi.Mux {
 	a.post("/users/login", a.Handlers.PostUserLogin)
 	a.get("/users/logout", a.Handlers.Logout)
 	a.get("/users/forgot-password", a.Handlers.Forgot)
-	a.get("/users/forgot-password", a.Handlers.PostForgot)
+	a.post("/users/forgot-password", a.Handlers.PostForgot)
 	a.get("/form", a.Handlers.Form)
 	a.get("/json", a.Handlers.Json)
 	a.get("/xml", a.Handlers.XML)

@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"app/data"
+	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/mailer"
+	"cloud0.christosploutarchou.com/cploutarchou/MicroGO/url_signer"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
@@ -139,5 +141,50 @@ func (h *Handlers) Forgot(w http.ResponseWriter, r *http.Request) {
 
 }
 func (h *Handlers) PostForgot(w http.ResponseWriter, r *http.Request) {
+	// parse form data
+	err := r.ParseForm()
+	if err != nil {
+		h.APP.ErrorStatus(w, http.StatusBadRequest)
+		return
+	}
+	// verify email if exists
+	var u *data.User
+	email := r.Form.Get("email")
+	u, err = u.GetByEmail(email)
+	if err != nil {
+		h.APP.ErrorStatus(w, http.StatusBadRequest)
+		return
+	}
+	// create link to reset password form
+	link := fmt.Sprintf("%s/users/reset-password?email=%s", h.APP.Server.URL, email)
+	sign := url_signer.Signer{
+		Secret: []byte(h.APP.EncryptionKey),
+	}
+	// sing the link and send it to the user
+	signed := sign.GenerateToken(link)
+	h.APP.InfoLog.Println("Signed link : ", signed)
 
+	var data struct {
+		Name string
+		Link string
+	}
+	data.Link = signed
+	data.Name = fmt.Sprintf("%s %s", u.FirstName, u.LastName)
+	msg := mailer.Message{
+		To:             u.Email,
+		Subject:        "Reset Password",
+		Template:       "reset-password",
+		TemplateFormat: mailer.HTMLTemplateFormat,
+		Data:           data,
+		From:           "christos@cpdevlabs.com",
+	}
+	h.APP.Mailer.Jobs <- msg
+	res := <-h.APP.Mailer.Results
+	if res.Error != nil {
+		h.APP.ErrorStatus(w, http.StatusBadRequest)
+		fmt.Println(res.Error)
+		return
+	}
+	// redirect to login page
+	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
 }
