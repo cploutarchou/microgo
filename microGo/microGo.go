@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -51,8 +52,15 @@ type MicroGo struct {
 	Cache         cache.Cache
 	Scheduler     *cron.Cron
 	Mailer        mailer.Mailer
+	Server        Server
 }
 
+type Server struct {
+	ServerName string
+	Port       string
+	Secure     bool
+	URL        string
+}
 type config struct {
 	port        string
 	renderer    string
@@ -153,6 +161,17 @@ func (m *MicroGo) New(rootPath string) error {
 			password: os.Getenv("REDIS_PASSWORD"),
 			prefix:   os.Getenv("REDIS_PREFIX"),
 		},
+	}
+
+	secure := true
+	if strings.ToLower(os.Getenv("SECURE")) == "false" {
+		secure = false
+	}
+	m.Server = Server{
+		ServerName: os.Getenv("SERVER_NAME"),
+		Port:       os.Getenv("PORT"),
+		Secure:     secure,
+		URL:        os.Getenv("APP_URL"),
 	}
 	// initiate session
 	_session := session.Session{

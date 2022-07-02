@@ -52,13 +52,16 @@ func doAuth() error {
 	if err != nil {
 		gracefullyExit(err)
 	}
-
+	//Copy over data/models
 	err = copyTemplateFile("templates/data/user.go.txt", micro.RootPath+"/data/user.go")
 	if err != nil {
 		gracefullyExit(err)
 	}
-
 	err = copyTemplateFile("templates/data/token.go.txt", micro.RootPath+"/data/token.go")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	err = copyTemplateFile("templates/data/remember_token.go.txt", micro.RootPath+"/data/remember_token.go")
 	if err != nil {
 		gracefullyExit(err)
 	}
@@ -73,6 +76,39 @@ func doAuth() error {
 	if err != nil {
 		gracefullyExit(err)
 	}
+	err = copyTemplateFile("templates/middleware/remember.go.txt", micro.RootPath+"/middleware/remember.go")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	//Copy over handlers
+	err = copyTemplateFile("templates/handlers/auth-handlers.go.txt", micro.RootPath+"/handlers/auth-handlers.go")
+	if err != nil {
+		gracefullyExit(err)
+	}
+
+	//Copy over the views
+
+	err = copyTemplateFile("templates/mailer/reset-password.html.tmpl", micro.RootPath+"/mail/reset-password.html.tmpl")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	err = copyTemplateFile("templates/mailer/reset-password.plain.tmpl", micro.RootPath+"/mail/reset-password.plain.tmpl")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	err = copyTemplateFile("templates/views/login.jet", micro.RootPath+"/views/login.jet")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	err = copyTemplateFile("templates/views/forgot.jet", micro.RootPath+"/views/forgot.jet")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	err = copyTemplateFile("templates/views/reset-password.jet", micro.RootPath+"/views/reset-password.jet")
+	if err != nil {
+		gracefullyExit(err)
+	}
+
 	color.Yellow(" - users, tokens, and remember_tokens migrations successfully created and executed")
 	color.Yellow(" - user and tokens models successfully created")
 	color.Yellow(" - auth middleware successfully created")

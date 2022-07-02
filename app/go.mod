@@ -14,7 +14,7 @@ require (
 	github.com/justinas/nosurf v1.1.1
 	github.com/ory/dockertest/v3 v3.9.1
 	github.com/upper/db/v4 v4.5.2
-	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 )
 
 require (
