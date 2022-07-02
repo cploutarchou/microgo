@@ -12,7 +12,7 @@ import (
 //routes The application routes.
 func (a *application) routes() *chi.Mux {
 	// Note : All the middlewares must come before the routes
-
+	a.use(a.Middleware.CheckRemember)
 	// Add routes here
 	a.get("/", a.Handlers.Home)
 	a.get("/go-page", a.Handlers.GoHome)
@@ -21,8 +21,11 @@ func (a *application) routes() *chi.Mux {
 	a.get("/users/login", a.Handlers.UserLogin)
 	a.post("/users/login", a.Handlers.PostUserLogin)
 	a.get("/users/logout", a.Handlers.Logout)
+	a.get("/users/forgot-password", a.Handlers.Forgot)
+	a.post("/users/forgot-password", a.Handlers.PostForgot)
+	a.get("/users/reset-password", a.Handlers.ResetPasswordForm)
+	a.post("/users/reset-password", a.Handlers.PostResetPassword)
 	a.get("/form", a.Handlers.Form)
-
 	a.get("/json", a.Handlers.Json)
 	a.get("/xml", a.Handlers.XML)
 	a.get("/download", a.Handlers.Download)
