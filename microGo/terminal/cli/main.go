@@ -23,6 +23,13 @@ func main() {
 	switch arg1 {
 	case "help":
 		help()
+
+	case "new":
+		if arg2 == "" {
+			gracefullyExit(errors.New("No project name specified! "))
+		}
+		createNew(arg2)
+
 	case "version":
 		color.Yellow("Application version: " + version)
 
