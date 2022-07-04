@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"strings"
 )
 
@@ -13,7 +14,11 @@ func createNew(applicationName string) {
 	}
 
 	// sanitize the application name
-
+	if strings.Contains(applicationName, "/") {
+		exploded := strings.SplitAfter(applicationName, "/")
+		applicationName = exploded[len(exploded)-1]
+	}
+	log.Println("Application name: ", applicationName)
 	// git clone skeleton application
 
 	//remove the .git directory
