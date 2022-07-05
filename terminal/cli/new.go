@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
 	"log"
@@ -34,8 +35,23 @@ func createNew(applicationName string) {
 		gracefullyExit(err)
 	}
 	//remove the .git directory
-
+	err = os.RemoveAll(fmt.Sprintf("./%s/.git", applicationName))
+	if err != nil {
+		gracefullyExit(err)
+	}
 	// create a new .env file
+	color.Yellow("Creating a new .env file...")
+	data, err := templateFS.ReadFile("templates/env.txt")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	env := string(data)
+	env = strings.ReplaceAll(env, "${APP_NAME}", applicationName)
+	env = strings.ReplaceAll(env, "${KEY}", micro.CreateRandomString(32))
+	err = copyDataToFile([]byte(env), fmt.Sprintf("./%s/.env", applicationName))
+	if err != nil {
+		gracefullyExit(err)
+	}
 
 	// create a makefile for the application
 
