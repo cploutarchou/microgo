@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
+	"io"
 	"log"
 	"os"
+	"runtime"
 	"strings"
 )
 
@@ -54,6 +56,60 @@ func createNew(applicationName string) {
 	}
 
 	// create a makefile for the application
+	if runtime.GOOS == "windows" {
+		src, err := os.Open(fmt.Sprintf("./%s/Makefile.windows", applicationName))
+		if err != nil {
+			gracefullyExit(err)
+		}
+		defer func(src *os.File) {
+			err := src.Close()
+			if err != nil {
+				gracefullyExit(err)
+			}
+		}(src)
+		dest, err := os.Create(fmt.Sprintf("./%s/Makefile", applicationName))
+		if err != nil {
+			gracefullyExit(err)
+		}
+		defer func(dest *os.File) {
+			err := dest.Close()
+			if err != nil {
+
+			}
+		}(dest)
+		_, err = io.Copy(dest, src)
+		if err != nil {
+			gracefullyExit(err)
+		}
+	} else {
+		src, err := os.Open(fmt.Sprintf("./%s/Makefile.mac", applicationName))
+		if err != nil {
+			gracefullyExit(err)
+		}
+		defer func(src *os.File) {
+			err := src.Close()
+			if err != nil {
+
+			}
+		}(src)
+		dest, err := os.Create(fmt.Sprintf("./%s/Makefile", applicationName))
+		if err != nil {
+			gracefullyExit(err)
+		}
+		defer func(dest *os.File) {
+			err := dest.Close()
+			if err != nil {
+
+			}
+		}(dest)
+		_, err = io.Copy(dest, src)
+		if err != nil {
+			gracefullyExit(err)
+		}
+
+	}
+	_ = os.Remove("./" + applicationName + "/Makefile.mac")
+	_ = os.Remove("./" + applicationName + "/Makefile.windows")
 
 	// update the go.mod file
 
