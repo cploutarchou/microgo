@@ -26,7 +26,7 @@ func createNew(applicationName string) {
 	color.Green("\tCloning skeleton application from git repository...")
 
 	_, err := git.PlainClone("./"+applicationName, false, &git.CloneOptions{
-		URL:      "git@github.com:cploutarchou/MicroGO-Skeleton.git",
+		URL:      "git@github.com:cploutarchou/microGo_skeleton_app.git",
 		Progress: os.Stdout,
 		Depth:    1,
 	})
