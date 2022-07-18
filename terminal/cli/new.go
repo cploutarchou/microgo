@@ -12,9 +12,12 @@ import (
 	"strings"
 )
 
+var appURL string
+
 func createNew(applicationName string) {
 	applicationName = strings.TrimSpace(applicationName)
 	applicationName = strings.ToLower(applicationName)
+	appURL = applicationName
 	if applicationName == "" {
 		gracefullyExit(errors.New("No project name specified! "))
 	}
@@ -112,7 +115,18 @@ func createNew(applicationName string) {
 	_ = os.Remove("./" + applicationName + "/Makefile.windows")
 
 	// update the go.mod file
-
+	color.Yellow("\tUpdating go.mod file...")
+	_ = os.Remove("./" + applicationName + "/go.mod")
+	data, err = templateFS.ReadFile("templates/go.mod.txt")
+	if err != nil {
+		gracefullyExit(err)
+	}
+	mod := string(data)
+	mod = strings.ReplaceAll(mod, "${APP_NAME}", appURL)
+	err = copyDataToFile([]byte(mod), fmt.Sprintf("./"+applicationName+"/go.mod"))
+	if err != nil {
+		gracefullyExit(err)
+	}
 	// update the existing .go files with th correct package names
 
 	// run go mod tidy
