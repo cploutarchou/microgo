@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/joho/godotenv"
@@ -72,4 +75,43 @@ func help() {
 	make mail             - create two starter mail templates in the mail directory.
 	
 	`)
+}
+
+func updateSrcFiles(path string, fi os.FileInfo, err error) error {
+	// check for errors
+	if err != nil {
+		return err
+	}
+	// check if is dir
+	if fi.IsDir() {
+		return nil
+	}
+	// check if is go file
+	match, err := filepath.Match("*.go", fi.Name())
+	if err != nil {
+		return err
+	}
+	if match {
+		//read file
+		read, err := ioutil.ReadFile(path)
+		if err != nil {
+			gracefullyExit(err)
+		}
+		newContent := strings.Replace(string(read), "app", appURL, -1)
+		// save file
+		err = ioutil.WriteFile(path, []byte(newContent), 0)
+		if err != nil {
+			gracefullyExit(err)
+		}
+	}
+	return nil
+}
+
+// updateSrcFolders walks the given path and updates the src files and the sub folders
+func updateSrcFolders() error {
+	err := filepath.Walk(".", updateSrcFiles)
+	if err != nil {
+		return err
+	}
+	return nil
 }

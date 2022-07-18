@@ -128,7 +128,11 @@ func createNew(applicationName string) {
 		gracefullyExit(err)
 	}
 	// update the existing .go files with th correct package names
-
+	color.Yellow("\tUpdating go files...")
+	err = updateSrcFolders()
+	if err != nil {
+		gracefullyExit(err)
+	}
 	// run go mod tidy
 
 }
