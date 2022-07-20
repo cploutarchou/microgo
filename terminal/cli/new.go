@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"runtime"
 	"strings"
 )
@@ -58,29 +59,21 @@ func createNew(applicationName string) {
 		gracefullyExit(err)
 	}
 
-	// create a makefile for the application
+	// create a makefile
 	if runtime.GOOS == "windows" {
-		src, err := os.Open(fmt.Sprintf("./%s/Makefile.windows", applicationName))
+		source, err := os.Open(fmt.Sprintf("./%s/Makefile.windows", applicationName))
 		if err != nil {
 			gracefullyExit(err)
 		}
-		defer func(src *os.File) {
-			err := src.Close()
-			if err != nil {
-				gracefullyExit(err)
-			}
-		}(src)
-		dest, err := os.Create(fmt.Sprintf("./%s/Makefile", applicationName))
-		if err != nil {
-			gracefullyExit(err)
-		}
-		defer func(dest *os.File) {
-			err := dest.Close()
-			if err != nil {
+		defer source.Close()
 
-			}
-		}(dest)
-		_, err = io.Copy(dest, src)
+		destination, err := os.Create(fmt.Sprintf("./%s/Makefile", applicationName))
+		if err != nil {
+			gracefullyExit(err)
+		}
+		defer destination.Close()
+
+		_, err = io.Copy(destination, source)
 		if err != nil {
 			gracefullyExit(err)
 		}
@@ -89,27 +82,18 @@ func createNew(applicationName string) {
 		if err != nil {
 			gracefullyExit(err)
 		}
-		defer func(src *os.File) {
-			err := src.Close()
-			if err != nil {
+		defer src.Close()
 
-			}
-		}(src)
 		dest, err := os.Create(fmt.Sprintf("./%s/Makefile", applicationName))
 		if err != nil {
 			gracefullyExit(err)
 		}
-		defer func(dest *os.File) {
-			err := dest.Close()
-			if err != nil {
+		defer dest.Close()
 
-			}
-		}(dest)
 		_, err = io.Copy(dest, src)
 		if err != nil {
 			gracefullyExit(err)
 		}
-
 	}
 	_ = os.Remove("./" + applicationName + "/Makefile.mac")
 	_ = os.Remove("./" + applicationName + "/Makefile.windows")
@@ -129,10 +113,23 @@ func createNew(applicationName string) {
 	}
 	// update the existing .go files with th correct package names
 	color.Yellow("\tUpdating go files...")
+	err = os.Chdir("./" + applicationName)
+	if err != nil {
+		gracefullyExit(err)
+	}
 	err = updateSrcFolders()
 	if err != nil {
 		gracefullyExit(err)
 	}
 	// run go mod tidy
+	color.Yellow("\tRunning go mod tidy...")
+	cmd := exec.Command("go", "mod", "tidy")
+	err = cmd.Run()
+	if err != nil {
+		gracefullyExit(err)
+	}
+
+	color.Green("\tSuccessfully created a new microGo application!")
+	color.Green("Go build something amazing!")
 
 }

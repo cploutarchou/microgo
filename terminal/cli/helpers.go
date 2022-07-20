@@ -93,7 +93,7 @@ func updateSrcFiles(path string, fi os.FileInfo, err error) error {
 	}
 	if match {
 		//read file
-		read, err := ioutil.ReadFile(path)
+		read, err := os.ReadFile(path)
 		if err != nil {
 			gracefullyExit(err)
 		}
