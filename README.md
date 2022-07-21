@@ -5,9 +5,15 @@ In MicroGO, I take some of the most valuable features in Laravel and implement s
 Since Go is compiled and type-safe, web applications written in this language are typically much faster and far less
 error-prone than an equivalent application, Laravel, written in PHP.
 
-________________________________
-# Work-in-Progress ....................................
-________________________________
+## Requirements
+make sure you have the following dependencies:
+1. make - utility for building and maintaining groups of programs.
+2. GoLang - the compiler that MicroGO uses.
+
+### How to use MicroGO
+1. download or clone MicroGO repository from [GitHub](https://github.com/cploutarchou/MicroGO.git)
+2. Run make build command in the root directory of MicroGO.
+
 
 ### MicroGO Terminal Commands:
 
