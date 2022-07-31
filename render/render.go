@@ -6,20 +6,23 @@ import (
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
 	"github.com/justinas/nosurf"
+	"github.com/kataras/blocks"
 	"html/template"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Render struct {
-	Renderer   string
-	RootPath   string
-	Secure     bool
-	Port       string
-	ServerName string
-	JetViews   *jet.Set
-	Session    *scs.SessionManager
+	Renderer    string
+	RootPath    string
+	Secure      bool
+	Port        string
+	ServerName  string
+	JetViews    *jet.Set
+	BlocksViews *blocks.Blocks
+	Session     *scs.SessionManager
 }
 
 type TemplateData struct {
@@ -50,12 +53,16 @@ func (r *Render) DefaultData(templateData *TemplateData, request *http.Request) 
 }
 
 // Page The page render function. You can use it to render pages using go or jet templates.
-func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view string, variables, data interface{}) error {
+func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, layout string, variables, data interface{}) error {
 	switch strings.ToLower(r.Renderer) {
 	case "go":
 		return r.GoPage(writer, request, view, data)
 	case "jet":
 		return r.JetPage(writer, request, view, variables, data)
+	case "blocks":
+		data := data.(map[string]interface{})
+		return r.BlocksPage(writer, request, view, layout, nil, data)
+
 	default:
 	}
 	return errors.New("No rendering engine available. Please fill the required value (go or jet) in .env file ")
@@ -102,6 +109,35 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 	}
 	if err = t.Execute(writer, vars, td); err != nil {
 		log.Println(err)
+		return err
+	}
+	return nil
+}
+
+//BlocksPage The Blocks' engine template renderer function.
+func (r *Render) BlocksPage(writer http.ResponseWriter, request *http.Request, view, layout string, variables interface{}, data map[string]interface{}) error {
+	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+	r.BlocksViews = blocks.New("./views").
+		Reload(true).
+		Funcs(map[string]interface{}{
+			"year": func() int {
+				return time.Now().Year()
+			},
+		})
+	err := r.BlocksViews.Load()
+	if err != nil {
+		return err
+	}
+
+	td := &TemplateData{}
+
+	if data != nil {
+
+		data["data"] = r.DefaultData(td, request)
+	}
+
+	err = r.BlocksViews.ExecuteTemplate(writer, view, layout, data)
+	if err != nil {
 		return err
 	}
 	return nil
