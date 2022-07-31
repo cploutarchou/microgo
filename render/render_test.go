@@ -24,6 +24,11 @@ var templateTests = []struct {
 	},
 	{"jetTemplateNoTemplate", "jet", "not-exists",
 		true, "Something went wrong. Unable to render a not existing jet template.",
+	}, {"blocksTemplate", "blocks", "index",
+		false, "Unable to render jet template.",
+	},
+	{"blocksTemplateNoTemplate", "blocks", "not-exists",
+		true, "Something went wrong. Unable to render a not existing jet template.",
 	},
 	{"invalidRenderEngine", "foo", "home",
 		true, "No error while trying to render template with no valid engine.",
@@ -41,7 +46,7 @@ func TestRenderPage(t *testing.T) {
 
 		testRenderer.Renderer = task.renderer
 		testRenderer.RootPath = "./test"
-		err = testRenderer.Page(w, r, task.template, nil, nil)
+		err = testRenderer.Page(w, r, task.template, "", nil, nil)
 
 		if task.errorExpected {
 			if err == nil {
@@ -66,7 +71,7 @@ func TestRenderGoPage(t *testing.T) {
 	}
 	testRenderer.Renderer = "go"
 	testRenderer.RootPath = "./test"
-	err = testRenderer.Page(w, r, "home", nil, nil)
+	err = testRenderer.Page(w, r, "home", "", nil, nil)
 	if err != nil {
 		t.Error("Unable to render Go template. ", err)
 	}
@@ -79,8 +84,21 @@ func TestRenderJetPage(t *testing.T) {
 	}
 	testRenderer.Renderer = "jet"
 	testRenderer.RootPath = "./test"
-	err = testRenderer.Page(w, r, "home", nil, nil)
+	err = testRenderer.Page(w, r, "home", "", nil, nil)
 	if err != nil {
 		t.Error("Unable to render Jet template. ", err)
+	}
+}
+func TestRenderBlocksPage(t *testing.T) {
+	w := httptest.NewRecorder()
+	r, err := http.NewRequest("GET", "/url", nil)
+	if err != nil {
+		t.Error(err)
+	}
+	testRenderer.Renderer = "blocks"
+	testRenderer.RootPath = "./test"
+	err = testRenderer.Page(w, r, "index", "main", nil, nil)
+	if err != nil {
+		t.Error("Unable to render blocks template. ", err)
 	}
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
+	"github.com/kataras/blocks"
 	"github.com/robfig/cron/v3"
 	"log"
 	"net/http"
@@ -45,6 +46,7 @@ type MicroGo struct {
 	Routes        *chi.Mux
 	Render        *render.Render
 	JetView       *jet.Set
+	BlocksView    *blocks.Blocks
 	config        config
 	Session       *scs.SessionManager
 	DB            Database
@@ -287,11 +289,12 @@ func (m *MicroGo) startLoggers() (*log.Logger, *log.Logger, *log.Logger, *log.Lo
 //createRenderer Create a Renderer for microGo application.
 func (m *MicroGo) createRenderer() {
 	renderer := render.Render{
-		Renderer: m.config.renderer,
-		RootPath: m.RootPath,
-		Port:     m.config.port,
-		JetViews: m.JetView,
-		Session:  m.Session,
+		Renderer:    m.config.renderer,
+		RootPath:    m.RootPath,
+		Port:        m.config.port,
+		JetViews:    m.JetView,
+		BlocksViews: m.BlocksView,
+		Session:     m.Session,
 	}
 	m.Render = &renderer
 }
