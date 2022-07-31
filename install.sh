@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Installing MicroGO binaries..."
-wget https://github.com/cploutarchou/MicroGO/releases/download/v1.0.0/microGo
+wget https://github.com/cploutarchou/MicroGO/releases/download/v1.0.1/microGo
 userDir=$USER
 echo "Enter your password to install MicroGO binaries using sudo"
 sudo chmod +x microGo
