@@ -1,25 +1,13 @@
-{{extends "./layouts/base.jet"}}
-
-{{block browserTitle()}}
-Forgot Password
-{{end}}
-
-{{block css()}} {{end}}
-
-{{block pageContent()}}
 <h2 class="mt-5 text-center">Forgot Password</h2>
 
 <hr>
-
-{{if .Error != ""}}
+{{ if .Error }}
 <div class="alert alert-danger text-center">
-    {{.Error}}
 </div>
 {{end}}
 
-{{if .Flash != ""}}
+{{if .Flash }}
 <div class="alert alert-info text-center">
-    {{.Flash}}
 </div>
 {{end}}
 
@@ -29,13 +17,8 @@ Forgot Password
     email you a link to reset your password.
 </p>
 
-<form method="post"
-      name="forgot-form" id="forgot-form"
-      class="d-block needs-validation"
-      action="/users/forgot-password"
-      autocomplete="off" novalidate=""
-      onkeydown="return event.key != 'Enter';"
->
+<form method="post" name="forgot-form" id="forgot-form" class="d-block needs-validation"
+      action="/users/forgot-password" autocomplete="off" novalidate="" onkeydown="return event.key !== 'Enter';">
     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
     <div class="mb-3">
@@ -43,9 +26,7 @@ Forgot Password
         <input type="email" class="form-control" id="email" name="email"
                required="" autocomplete="email-new">
     </div>
-
     <hr>
-
     <a href="javascript:void(0)" class="btn btn-primary" onclick="val()">Send Reset Password Email</a>
 
 </form>
@@ -56,9 +37,7 @@ Forgot Password
 
 
 <p>&nbsp;</p>
-{{end}}
 
-{{ block js()}}
 <script>
     function val() {
         let form = document.getElementById("forgot-form");
@@ -72,4 +51,4 @@ Forgot Password
         document.getElementById("forgot-form").submit();
     }
 </script>
-{{end}}
+

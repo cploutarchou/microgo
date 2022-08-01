@@ -1,39 +1,31 @@
-{{extends "./layouts/base.jet"}}
-
-{{block browserTitle()}}
-Login
-{{end}}
-
-{{block css()}} {{end}}
-
-{{block pageContent()}}
 <h2 class="mt-5 text-center">Login</h2>
-
-
 <hr>
-{{if .Flash != ""}}
+
+{{ if .Flash }}
+
 <div class="alert alert-info text-center">
-    {{.Flash}}
+
 </div>
-{{end}}
+{{ end }}
+
 <form method="post" action="/users/login"
-    name="login-form" id="login-form"
-    class="d-block needs-validation"
-    autocomplete="off" novalidate="">
+      name="login-form" id="login-form"
+      class="d-block needs-validation"
+      autocomplete="off" novalidate="">
 
     <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
     <div class="mb-3">
         <label for="email" class="form-label">Email</label>
         <input type="email" class="form-control" id="email" name="email"
-            required="" autocomplete="email-new">
+               required="" autocomplete="email-new">
     </div>
 
     <div class="mb-3">
         <label for="password" class="form-label">Password</label>
         <input type="password" class="form-control" id="password"
-            name="password"
-            required="" autocomplete="password-new">
+               name="password"
+               required="" autocomplete="password-new">
     </div>
 
     <hr>
@@ -54,21 +46,18 @@ Login
 
 <p>&nbsp;</p>
 
-{{end}}
 
-{{block js()}}
 <script>
-        function val() {
-            let form = document.getElementById("login-form");
-            if (form.checkValidity() === false) {
-                this.event.preventDefault();
-                this.event.stopPropagation();
-                form.classList.add("was-validated");
-                return;
-            }
-
+    function val() {
+        let form = document.getElementById("login-form");
+        if (form.checkValidity() === false) {
+            this.event.preventDefault();
+            this.event.stopPropagation();
             form.classList.add("was-validated");
-            form.submit();
+            return;
         }
-    </script>
-{{end}}
+
+        form.classList.add("was-validated");
+        form.submit();
+    }
+</script>
