@@ -76,7 +76,7 @@ func makeDo(arg2, arg3 string) error {
 			gracefullyExit(errors.New(fileName + " already exists!"))
 		}
 
-		data, err := templateFS.ReadFile("templates/handlers/handler.go.txt")
+		data, err := readFromRepo("templates/handlers/handler.go.txt")
 		if err != nil {
 			gracefullyExit(err)
 		}
@@ -92,7 +92,7 @@ func makeDo(arg2, arg3 string) error {
 		if arg3 == "" {
 			gracefullyExit(errors.New("you must give a name to your model"))
 		}
-		data, err := templateFS.ReadFile("templates/data/model.go.txt")
+		data, err := readFromRepo("templates/data/model.go.txt")
 		if err != nil {
 			gracefullyExit(err)
 		}

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"errors"
 	"io/ioutil"
+	"net/http"
 	"os"
 )
 
@@ -14,8 +15,14 @@ func copyTemplateFile(templatePath, targetFile string) error {
 	if fileExists(targetFile) {
 		return errors.New(targetFile + " already exists!")
 	}
+	fileUrl := "https://raw.githubusercontent.com/cploutarchou/MicroGO/master/terminal/cli/"
+	resp, err := http.Get(fileUrl + templatePath)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
 
-	data, err := templateFS.ReadFile(templatePath)
 	if err != nil {
 		gracefullyExit(err)
 	}
@@ -27,7 +34,19 @@ func copyTemplateFile(templatePath, targetFile string) error {
 
 	return nil
 }
-
+func readFromRepo(fileToRead string) ([]byte, error) {
+	fileUrl := "https://raw.githubusercontent.com/cploutarchou/MicroGO/master/terminal/cli/"
+	resp, err := http.Get(fileUrl + fileToRead)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
 func copyDataToFile(data []byte, to string) error {
 	err := ioutil.WriteFile(to, data, 0644)
 	if err != nil {
