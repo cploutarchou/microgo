@@ -96,15 +96,15 @@ func doAuth() error {
 	if err != nil {
 		gracefullyExit(err)
 	}
-	err = copyTemplateFile("templates/views/login.jet", micro.RootPath+"/views/login.jet")
+	err = copyTemplateFile("templates/views/login.html", micro.RootPath+"/views/login.html")
 	if err != nil {
 		gracefullyExit(err)
 	}
-	err = copyTemplateFile("templates/views/forgot.jet", micro.RootPath+"/views/forgot.jet")
+	err = copyTemplateFile("templates/views/forgot.html", micro.RootPath+"/views/forgot.html")
 	if err != nil {
 		gracefullyExit(err)
 	}
-	err = copyTemplateFile("templates/views/reset-password.jet", micro.RootPath+"/views/reset-password.jet")
+	err = copyTemplateFile("templates/views/reset-password.html", micro.RootPath+"/views/reset-password.html")
 	if err != nil {
 		gracefullyExit(err)
 	}
