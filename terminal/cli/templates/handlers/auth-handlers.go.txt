@@ -2,18 +2,20 @@ package handlers
 
 import (
 	"app/data"
-	"github.com/cploutarchou/MicroGO/mailer"
-	"github.com/cploutarchou/MicroGO/url_signer"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"github.com/CloudyKit/jet/v6"
+	"github.com/cploutarchou/MicroGO/mailer"
+	"github.com/cploutarchou/MicroGO/url_signer"
 	"net/http"
 	"time"
 )
 
 func (h *Handlers) UserLogin(w http.ResponseWriter, r *http.Request) {
-	err := h.APP.Render.Page(w, r, "login", nil, nil)
+	_data := map[string]interface{}{
+		"Title": "Login",
+	}
+	err := h.APP.Render.Page(w, r, "login", "main", nil, _data)
 	if err != nil {
 		h.APP.ErrorLog.Println(err)
 	}
@@ -149,7 +151,10 @@ func (h *Handlers) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) Forgot(w http.ResponseWriter, r *http.Request) {
-	err := h.render(w, r, "forgot", nil, nil)
+	_data := map[string]interface{}{
+		"Title": "Forgot password",
+	}
+	err := h.render(w, r, "forgot", "main", nil, _data)
 	if err != nil {
 		h.APP.ErrorLog.Println("Something went wrong unable to render page : ", err)
 		h.APP.Error500(w, r)
@@ -192,7 +197,7 @@ func (h *Handlers) PostForgot(w http.ResponseWriter, r *http.Request) {
 		Template:       "reset-password",
 		TemplateFormat: mailer.HTMLTemplateFormat,
 		Data:           msgData,
-		From:           "christos@cpdevlabs.com",
+		From:           "cploutarchou@gmail.com",
 	}
 	h.APP.Mailer.Jobs <- msg
 	res := <-h.APP.Mailer.Results
@@ -229,10 +234,11 @@ func (h *Handlers) ResetPasswordForm(w http.ResponseWriter, r *http.Request) {
 	}
 	// Display the form
 	encEmail, _ := h.encrypt(email)
-	vars := make(jet.VarMap)
-	vars.Set("email", encEmail)
-
-	err := h.render(w, r, "reset-password", vars, nil)
+	_data := map[string]interface{}{
+		"Title": "Forgot password",
+		"email": encEmail,
+	}
+	err := h.render(w, r, "reset-password", "main", nil, _data)
 	if err != nil {
 		h.APP.ErrorLog.Println("Something went wrong unable to render page : ", err)
 		h.APP.ErrorUnauthorized(w, r)
