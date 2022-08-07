@@ -60,8 +60,7 @@ func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, l
 	case "jet":
 		return r.JetPage(writer, request, view, variables, data)
 	case "blocks":
-		data := data.(map[string]interface{})
-		return r.BlocksPage(writer, request, view, layout, nil, data)
+		return r.BlocksPage(writer, request, view, layout, nil, data.(map[string]interface{}))
 
 	default:
 	}
@@ -87,7 +86,7 @@ func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view 
 	return nil
 }
 
-//JetPage The jet engine template renderer function.
+// JetPage The jet engine template renderer function.
 func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view string, variables, data interface{}) error {
 	var vars jet.VarMap
 	if variables == nil {
@@ -114,7 +113,7 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 	return nil
 }
 
-//BlocksPage The Blocks' engine template renderer function.
+// BlocksPage The Blocks' engine template renderer function.
 func (r *Render) BlocksPage(writer http.ResponseWriter, request *http.Request, view, layout string, variables interface{}, data map[string]interface{}) error {
 	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 	r.BlocksViews = blocks.New("./views").

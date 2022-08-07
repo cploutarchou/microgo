@@ -105,10 +105,24 @@ func (m *MicroGo) New(rootPath string) error {
 
 	// Database connection
 	if os.Getenv("DATABASE_TYPE") != "" {
-		db, err := m.OpenDB(os.Getenv("DATABASE_TYPE"), m.BuildDataSourceName())
-		if err != nil {
-			errorLog.Println(err)
-			os.Exit(1)
+		var db *sql.DB
+		switch os.Getenv("DATABASE_TYPE") {
+		case "":
+			m.ErrorLog.Println("DATABASE_TYPE is not set")
+
+		case "mysql", "mariadb":
+			db, err = m.OpenDB("mysql", m.BuildDataSourceName())
+			if err != nil {
+				errorLog.Println(err)
+				os.Exit(1)
+			}
+		case "postgres", "postgresql":
+			db, err = m.OpenDB("postgres", m.BuildDataSourceName())
+			if err != nil {
+				errorLog.Println(err)
+				os.Exit(1)
+			}
+
 		}
 		m.DB = Database{
 			DatabaseType: os.Getenv("DATABASE_TYPE"),
@@ -273,7 +287,7 @@ func (m *MicroGo) checkDotEnv(path string) error {
 	return nil
 }
 
-//startLoggers Initializes all loggers for microGo application.
+// startLoggers Initializes all loggers for microGo application.
 func (m *MicroGo) startLoggers() (*log.Logger, *log.Logger, *log.Logger, *log.Logger) {
 	var infoLog *log.Logger
 	var errorLog *log.Logger
@@ -286,7 +300,7 @@ func (m *MicroGo) startLoggers() (*log.Logger, *log.Logger, *log.Logger, *log.Lo
 	return infoLog, errorLog, warnLog, buildLog
 }
 
-//createRenderer Create a Renderer for microGo application.
+// createRenderer Create a Renderer for microGo application.
 func (m *MicroGo) createRenderer() {
 	renderer := render.Render{
 		Renderer:    m.config.renderer,
@@ -299,7 +313,7 @@ func (m *MicroGo) createRenderer() {
 	m.Render = &renderer
 }
 
-//createRenderer Create a Renderer for microGo application.
+// createRenderer Create a Renderer for microGo application.
 func (m *MicroGo) createMailer() mailer.Mailer {
 	port, _ := strconv.Atoi(os.Getenv("SMTP_PORT"))
 	_mailer := mailer.Mailer{
@@ -336,11 +350,18 @@ func (m *MicroGo) BuildDataSourceName() string {
 		if os.Getenv("DATABASE_PASS") != "" {
 			dsn = fmt.Sprintf("%s password=%s", dsn, os.Getenv("DATABASE_PASS"))
 		}
-
+		return dsn
+	case "mysql", "mariadb":
+		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			os.Getenv("DATABASE_USER"),
+			os.Getenv("DATABASE_PASS"),
+			os.Getenv("DATABASE_HOST"),
+			os.Getenv("DATABASE_PORT"),
+			os.Getenv("DATABASE_NAME"))
 	default:
 
 	}
-	return dsn
+	return ""
 }
 
 func (m *MicroGo) createRedisPool() *redis.Pool {
