@@ -3,6 +3,13 @@ package MicroGO
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
 	"github.com/cploutarchou/MicroGO/cache"
@@ -15,15 +22,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kataras/blocks"
 	"github.com/robfig/cron/v3"
-	"log"
-	"net/http"
-	"os"
-	"strconv"
-	"strings"
-	"time"
 )
 
-const version = "1.0.1"
+const version = "1.0.3"
 
 var (
 	redisCache       *cache.RedisCache
