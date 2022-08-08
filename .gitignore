@@ -20,3 +20,4 @@ cache/testdata/tmp/badger/*
 app/views/login.jet
 app/views/forgot.jet
 app/views/reset-password.jet
+.vscode/*
