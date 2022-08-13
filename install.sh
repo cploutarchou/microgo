@@ -1,7 +1,7 @@
 #!/bin/bash
 userDir=$USER
 echo "Installing MicroGO binaries..."
-curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.3/microGo
+curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.4/microGo
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     if grep -q "alias microGo" ~/.zprofile; then
         echo "Already exported"
