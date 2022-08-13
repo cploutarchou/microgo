@@ -5,6 +5,8 @@ curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.4/micro
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     if grep -q "alias microGo" ~/.zprofile; then
         echo "Already exported"
+        sudo mv microGo /usr/local/bin/microGo
+        chmod +x /usr/local/bin/microGo
     else
         sudo mv microGo /usr/local/bin/microGo
         chmod +x /usr/local/bin/microGo
