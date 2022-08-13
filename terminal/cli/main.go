@@ -2,12 +2,13 @@ package main
 
 import (
 	"errors"
+	"os"
+
 	microGo "github.com/cploutarchou/MicroGO"
 	"github.com/fatih/color"
-	"os"
 )
 
-const version = "1.0.1"
+const version = "1.0.4"
 
 var micro microGo.MicroGo
 
