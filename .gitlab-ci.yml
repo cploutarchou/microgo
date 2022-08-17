@@ -1,0 +1,23 @@
+image: golang:latest
+
+stages:
+  - test
+  - build
+  - deploy
+
+format:
+  stage: test
+  script:
+    - go fmt $(go list ./... | grep -v /vendor/)
+    - go vet $(go list ./... | grep -v /vendor/)
+    - go test -race $(go list ./... | grep -v /vendor/)
+
+compile:
+  stage: build
+  script:
+    - mkdir -p microGo
+    - go build -o microGo ./...
+  artifacts:
+    paths:
+      - microGo
+
