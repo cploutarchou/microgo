@@ -1,4 +1,5 @@
-## MicroGO the Go version of Laravel Framework
+![logo](https://raw.githubusercontent.com/cploutarchou/MicroGO/master/docs/cover.png)
+# The Go version of Laravel Framework
 
 In MicroGO, I take some of the most valuable features in Laravel and implement similar functionality in Go.
 
