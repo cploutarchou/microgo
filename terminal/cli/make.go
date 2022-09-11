@@ -27,10 +27,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/fatih/color"
 	"github.com/gertd/go-pluralize"
 	"github.com/iancoleman/strcase"
-	"io/ioutil"
+
 	"strings"
 	"time"
 )
@@ -84,7 +86,7 @@ func makeDo(arg2, arg3 string) error {
 		handler := string(data)
 		handler = strings.ReplaceAll(handler, "$HANDLERNAME$", strcase.ToCamel(arg3))
 
-		err = ioutil.WriteFile(fileName, []byte(handler), 0644)
+		err = os.WriteFile(fileName, []byte(handler), 0644)
 		if err != nil {
 			gracefullyExit(err)
 		}
@@ -124,7 +126,7 @@ func makeDo(arg2, arg3 string) error {
 		}
 	case "mail":
 		if arg3 == "" {
-			gracefullyExit(errors.New("You must specify template file name! "))
+			gracefullyExit(errors.New("you must specify template file name! "))
 		}
 		htmlMail := micro.RootPath + "/mail/" + strings.ToLower(arg3) + ".html.tmpl"
 		plainTextMail := micro.RootPath + "/mail/" + strings.ToLower(arg3) + ".plain.tmpl"
