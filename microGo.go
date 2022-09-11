@@ -112,18 +112,23 @@ func (m *MicroGo) New(rootPath string) error {
 			m.ErrorLog.Println("DATABASE_TYPE is not set")
 
 		case "mysql", "mariadb":
-			db, err = m.OpenDB("mysql", m.BuildDataSourceName())
+			db, err = m.OpenDB("mysql", m.BuildDSN())
 			if err != nil {
 				errorLog.Println(err)
 				os.Exit(1)
 			}
 		case "postgres", "postgresql":
-			db, err = m.OpenDB("postgres", m.BuildDataSourceName())
+			db, err = m.OpenDB("postgres", m.BuildDSN())
 			if err != nil {
 				errorLog.Println(err)
 				os.Exit(1)
 			}
-
+		default:
+			db, err = m.OpenDB("sqlite3", m.BuildDSN())
+			if err != nil {
+				errorLog.Println(err)
+				os.Exit(1)
+			}
 		}
 		m.DB = Database{
 			DatabaseType: os.Getenv("DATABASE_TYPE"),
@@ -170,7 +175,7 @@ func (m *MicroGo) New(rootPath string) error {
 		sessionType: os.Getenv("SESSION_TYPE"),
 		database: databaseConfig{
 			database:       os.Getenv("DATABASE_TYPE"),
-			dataSourceName: m.BuildDataSourceName(),
+			dataSourceName: m.BuildDSN(),
 		},
 		redis: redisConfig{
 			host:     os.Getenv("REDIS_HOST"),
@@ -336,8 +341,8 @@ func (m *MicroGo) createMailer() mailer.Mailer {
 	return _mailer
 }
 
-// BuildDataSourceName builds the datasource name for our database, and returns it as a string
-func (m *MicroGo) BuildDataSourceName() string {
+// BuildDSN builds the datasource name for our database, and returns it as a string
+func (m *MicroGo) BuildDSN() string {
 	var dsn string
 
 	switch os.Getenv("DATABASE_TYPE") {
