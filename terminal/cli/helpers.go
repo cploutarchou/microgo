@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -55,7 +54,7 @@ func getDSN() string {
 		}
 		return dsn
 	}
-	return "mysql://" + micro.BuildDataSourceName()
+	return "mysql://" + micro.BuildDSN()
 }
 
 func help() {
@@ -99,7 +98,7 @@ func updateSrcFiles(path string, fi os.FileInfo, err error) error {
 		}
 		newContent := strings.Replace(string(read), "app", appURL, -1)
 		// save file
-		err = ioutil.WriteFile(path, []byte(newContent), 0)
+		err = os.WriteFile(path, []byte(newContent), 0)
 		if err != nil {
 			gracefullyExit(err)
 		}
