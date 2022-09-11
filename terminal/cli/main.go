@@ -27,7 +27,7 @@ func main() {
 
 	case "new":
 		if arg2 == "" {
-			gracefullyExit(errors.New("No project name specified! "))
+			gracefullyExit(errors.New("o project name specified! "))
 		}
 		createNew(arg2)
 
@@ -71,7 +71,7 @@ func validateInput() (string, string, string, error) {
 	} else {
 		color.Red("Error : No valid input.")
 		help()
-		return "", "", "", errors.New("Command line arguments is required! ")
+		return "", "", "", errors.New("command line arguments is required! ")
 	}
 	return arg1, arg2, arg3, nil
 }
