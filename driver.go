@@ -33,13 +33,17 @@ import (
 )
 
 func (m *MicroGo) OpenDB(driverName, dataSourceName string) (*sql.DB, error) {
-	if driverName == "postgres" || driverName == "postgresql" {
+	switch {
+	case driverName == "postgres" || driverName == "postgresql":
 		driverName = "pgx"
+		break
+	case driverName == "mysql" || driverName == "mariadb":
+		driverName = "mysql"
+		break
+	default:
+		driverName = "sqlite3"
 	}
 
-	if driverName == "mysql" || driverName == "mariadb" {
-		driverName = "mysql"
-	}
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
