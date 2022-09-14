@@ -10,14 +10,14 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     else
         sudo mv microGo /usr/local/bin/microGo
         chmod +x /usr/local/bin/microGo
-        echo 'export PATH=$PATH:/usr/local/bin/microGo' >>/home/"$userDir"/.bashrc
+        echo "export PATH=$PATH:/usr/local/bin/microGo" >>/home/"$userDir"/.bashrc
         echo "MicroGO binaries exported to PATH"
         source /home/"$userDir"/.bashrc
     fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    mv microGo /Users/$userDir/go/bin/microGo
+    mv microGo /Users/"$userDir"/go/bin/microGo
     echo "Enter your password to install MicroGO binaries using sudo"
-    chmod +x /Users/$userDir/go/bin/microGo # move to /usr/local/bin/microGo
+    chmod +x /Users/"$userDir"/go/bin/microGo # move to /usr/local/bin/microGo
     echo "MicroGO binaries installed"
     echo "Export env"
     if grep -q "alias microGo" ~/.zprofile; then
