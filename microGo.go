@@ -22,6 +22,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kataras/blocks"
 	"github.com/robfig/cron/v3"
+	"github.com/uptrace/bun"
 )
 
 const version = "1.0.4"
@@ -106,7 +107,7 @@ func (m *MicroGo) New(rootPath string) error {
 
 	// Database connection
 	if os.Getenv("DATABASE_TYPE") != "" {
-		var db *sql.DB
+		var db *bun.DB
 		switch os.Getenv("DATABASE_TYPE") {
 		case "":
 			m.ErrorLog.Println("DATABASE_TYPE is not set")
@@ -132,7 +133,7 @@ func (m *MicroGo) New(rootPath string) error {
 		}
 		m.DB = Database{
 			DatabaseType: os.Getenv("DATABASE_TYPE"),
-			Pool:         db,
+			Client:       db,
 		}
 	}
 	scheduler := cron.New()
@@ -202,13 +203,13 @@ func (m *MicroGo) New(rootPath string) error {
 		CookieName:     m.config.cookie.name,
 		SessionType:    m.config.sessionType,
 		CookieDomain:   m.config.cookie.domain,
-		DBPool:         m.DB.Pool,
+		DBPool:         m.DB.Client,
 	}
 	switch m.config.sessionType {
 	case "redis":
 		_session.RedisPool = redisCache.Connection
 	case "mysql", "mariadb", "postgres", "postgresql":
-		_session.DBPool = m.DB.Pool
+		_session.DBPool = m.DB.Client
 	}
 
 	m.Session = _session.InitializeSession()
@@ -255,13 +256,13 @@ func (m *MicroGo) ListenAndServe() {
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 600 * time.Second,
 	}
-	if m.DB.Pool != nil {
+	if m.DB.Client.DB != nil {
 		defer func(Pool *sql.DB) {
 			err := Pool.Close()
 			if err != nil {
 				m.WarningLog.Println(err)
 			}
-		}(m.DB.Pool)
+		}(m.DB.Client.DB)
 	}
 
 	if redisPool != nil {
@@ -344,17 +345,17 @@ func (m *MicroGo) createMailer() mailer.Mailer {
 // BuildDSN builds the datasource name for our database, and returns it as a string
 func (m *MicroGo) BuildDSN() string {
 	var dsn string
-
+	// dsn := "postgres://postgres:@localhost:5432/test?sslmode=disable"
 	switch os.Getenv("DATABASE_TYPE") {
 	case "postgres", "postgresql":
-		dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s timezone=UTC connect_timeout=5",
+		dsn = fmt.Sprintf("postgres://%s:@%s:%s/%s?sslmode=%s",
 			os.Getenv("DATABASE_HOST"),
 			os.Getenv("DATABASE_PORT"),
 			os.Getenv("DATABASE_USER"),
 			os.Getenv("DATABASE_NAME"),
 			os.Getenv("DATABASE_SSL_MODE"))
 		if os.Getenv("DATABASE_PASS") != "" {
-			dsn = fmt.Sprintf("%s password=%s", dsn, os.Getenv("DATABASE_PASS"))
+			dsn = fmt.Sprintf("%s?password=%s", dsn, os.Getenv("DATABASE_PASS"))
 		}
 		return dsn
 	case "mysql", "mariadb":

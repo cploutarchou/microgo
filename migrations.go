@@ -25,7 +25,7 @@ func (m *MicroGo) MigrateUp(dsn string) error {
 	migrations := migrate.FileMigrationSource{
 		Dir: path,
 	}
-	n, err := migrate.Exec(m.DB.Pool, m.DB.DatabaseType, migrations, migrate.Up)
+	n, err := migrate.Exec(m.DB.Client.DB, m.DB.DatabaseType, migrations, migrate.Up)
 
 	if err != nil {
 		log.Println("Error running migration:", err)
@@ -46,7 +46,7 @@ func (m *MicroGo) MigrateDownAll(dsn string) error {
 	migrations := migrate.FileMigrationSource{
 		Dir: path,
 	}
-	n, err := migrate.Exec(m.DB.Pool, m.DB.DatabaseType, migrations, migrate.Down)
+	n, err := migrate.Exec(m.DB.Client.DB, m.DB.DatabaseType, migrations, migrate.Down)
 
 	if err != nil {
 		log.Println("Error running migration:", err)

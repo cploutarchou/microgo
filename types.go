@@ -1,6 +1,6 @@
 package MicroGO
 
-import "database/sql"
+import "github.com/uptrace/bun"
 
 type initPaths struct {
 	rootPath    string
@@ -22,7 +22,7 @@ type databaseConfig struct {
 
 type Database struct {
 	DatabaseType string
-	Pool         *sql.DB
+	Client         *bun.DB
 }
 
 type redisConfig struct {

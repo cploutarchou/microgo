@@ -1,7 +1,6 @@
 package session
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,6 +11,7 @@ import (
 	"github.com/alexedwards/scs/redisstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/gomodule/redigo/redis"
+	"github.com/uptrace/bun"
 )
 
 type Session struct {
@@ -21,7 +21,7 @@ type Session struct {
 	CookieDomain   string
 	SessionType    string
 	IsCookieSecure string
-	DBPool         *sql.DB
+	DBPool         *bun.DB
 	RedisPool      *redis.Pool
 }
 
@@ -59,9 +59,9 @@ func (s *Session) InitializeSession() *scs.SessionManager {
 	case "redis":
 		session.Store = redisstore.New(s.RedisPool)
 	case "mysql", "mariadb":
-		session.Store = mysqlstore.New(s.DBPool)
+		session.Store = mysqlstore.New(s.DBPool.DB)
 	case "postgres", "postgresql":
-		session.Store = postgresstore.New(s.DBPool)
+		session.Store = postgresstore.New(s.DBPool.DB)
 	default:
 
 	}

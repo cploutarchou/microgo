@@ -27,24 +27,31 @@ package MicroGO
 import (
 	"database/sql"
 
-	_ "github.com/jackc/pgconn"
-	_ "github.com/jackc/pgx/v4"
-	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/dialect/sqlitedialect"
+	"github.com/uptrace/bun/driver/pgdriver"
+	"github.com/uptrace/bun/driver/sqliteshim"
 )
 
-func (m *MicroGo) OpenDB(driverName, dataSourceName string) (*sql.DB, error) {
+func (m *MicroGo) OpenDB(driverName, dataSourceName string) (*bun.DB, error) {
+	var sqldb *sql.DB
+	var db *bun.DB
+	var err error
 	switch {
 	case driverName == "postgres" || driverName == "postgresql":
-		driverName = "pgx"
-		break
+		sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dataSourceName)))
+		db = bun.NewDB(sqldb, pgdialect.New())
 	case driverName == "mysql" || driverName == "mariadb":
 		driverName = "mysql"
-		break
+		sqldb, err = sql.Open(driverName, dataSourceName)
 	default:
-		driverName = "sqlite3"
+		driverName = "sqlite"
+		sqldb, err = sql.Open(driverName, dataSourceName)
+		sql.Open(sqliteshim.ShimName, "file::memory:?cache=shared")
+		db = bun.NewDB(sqldb, sqlitedialect.New())
 	}
 
-	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}

@@ -17,11 +17,6 @@ func doMigrate(arg2, arg3 string) error {
 			if err != nil {
 				return err
 			}
-		} else {
-			err := micro.Steps(-1, dsn)
-			if err != nil {
-				return err
-			}
 		}
 	case "reset":
 		err := micro.MigrateDownAll(dsn)
