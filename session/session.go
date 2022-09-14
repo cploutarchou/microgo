@@ -2,15 +2,16 @@ package session
 
 import (
 	"database/sql"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/alexedwards/scs/postgresstore"
 	"github.com/alexedwards/scs/redisstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/gomodule/redigo/redis"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type Session struct {
