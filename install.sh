@@ -30,6 +30,5 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         source ~/.zprofile
     fi
 else
-
     echo "Unsupported OS"
 fi
