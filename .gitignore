@@ -22,4 +22,3 @@ app/views/forgot.jet
 app/views/reset-password.jet
 .vscode/*
 .DS_Store
-dist/
