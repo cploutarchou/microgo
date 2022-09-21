@@ -426,6 +426,8 @@ github.com/uptrace/bun/dialect/mysqldialect v1.1.8 h1:gcL5iy0yUbuJJLkE+0G3vAUS/6
 github.com/uptrace/bun/dialect/mysqldialect v1.1.8/go.mod h1:GQdbU4Yk/1qKVxfOieCAOC62ZM1c6qXUpgA1vxckEow=
 github.com/uptrace/bun/dialect/pgdialect v1.1.8 h1:wayJhjYDPGv8tgOBLolbBtSFQ0TihFoo8E1T129UdA8=
 github.com/uptrace/bun/dialect/pgdialect v1.1.8/go.mod h1:nNbU8PHTjTUM+CRtGmqyBb9zcuRAB8I680/qoFSmBUk=
+github.com/uptrace/bun/dialect/sqlitedialect v1.1.8 h1:IJ6qBLjeON21tpgmZF/V/k/oHdzAql5UrnaqMCksTlY=
+github.com/uptrace/bun/dialect/sqlitedialect v1.1.8/go.mod h1:IZF76cHEf8eeGA29OpkYyPYDs4l/iSMTYRyuFRqeXdY=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/vanng822/css v1.0.1 h1:10yiXc4e8NI8ldU6mSrWmSWMuyWgPr9DZ63RSlsgDw8=
