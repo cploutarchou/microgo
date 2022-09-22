@@ -32,24 +32,27 @@ import (
 )
 
 func (m *MicroGo) OpenDB(driverName, dataSourceName string) (*gorm.DB, error) {
-	var err error
-	var db *gorm.DB
 	switch {
 	case driverName == "postgres" || driverName == "postgresql":
-		db, err = gorm.Open(postgres.Open(dataSourceName), &gorm.Config{})
+		db, err := gorm.Open(postgres.Open(dataSourceName), &gorm.Config{})
+
+		if err != nil {
+			return nil, err
+		}
+		return db, nil
 	case driverName == "mysql" || driverName == "mariadb":
-		db, err = gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
+		db, err := gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
+		if err != nil {
+			return nil, err
+		}
+		return db, nil
 	default:
 		driverName = "sqlite"
-		db, err = gorm.Open(sqlite.Open(m.AppName), &gorm.Config{})
+		db, err := gorm.Open(sqlite.Open(m.AppName), &gorm.Config{})
 		if err != nil {
 			panic("failed to connect database")
 		}
+		return db, nil
 	}
 
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }
