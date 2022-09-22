@@ -9,6 +9,7 @@ require (
 	github.com/uptrace/bun v1.1.8
 	github.com/uptrace/bun/dialect/mysqldialect v1.1.8
 	github.com/uptrace/bun/dialect/pgdialect v1.1.8
+	github.com/uptrace/bun/dialect/sqlitedialect v1.1.8
 )
 
 require (
