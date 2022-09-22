@@ -1,6 +1,6 @@
 package MicroGO
 
-import "github.com/uptrace/bun"
+import "gorm.io/gorm"
 
 type initPaths struct {
 	rootPath    string
@@ -22,7 +22,7 @@ type databaseConfig struct {
 
 type Database struct {
 	DatabaseType string
-	Client         *bun.DB
+	Client       *gorm.DB
 }
 
 type redisConfig struct {

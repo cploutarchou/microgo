@@ -25,39 +25,28 @@ require (
 	github.com/kataras/blocks v0.0.6
 	github.com/ory/dockertest/v3 v3.8.0
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/uptrace/bun v1.1.8
-	github.com/uptrace/bun/dialect/pgdialect v1.1.8
-	github.com/uptrace/bun/dialect/sqlitedialect v1.1.8
-	github.com/uptrace/bun/driver/pgdriver v1.1.8
-	github.com/uptrace/bun/driver/sqliteshim v1.1.8
 	github.com/vanng822/go-premailer v1.20.1
 	github.com/xhit/go-simple-mail/v2 v2.10.0
 	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d
+	gorm.io/driver/postgres v1.3.10
+	gorm.io/driver/sqlite v1.3.6
+	gorm.io/gorm v1.23.10
 )
 
 require (
 	github.com/go-gorp/gorp/v3 v3.0.2 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.13.0 // indirect
+	github.com/jackc/pgio v1.0.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgtype v1.12.0 // indirect
+	github.com/jackc/pgx/v4 v4.17.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
-	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
-	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
-	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
-	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/tools v0.1.12 // indirect
-	lukechampine.com/uint128 v1.2.0 // indirect
-	mellium.im/sasl v0.3.0 // indirect
-	modernc.org/cc/v3 v3.36.3 // indirect
-	modernc.org/ccgo/v3 v3.16.9 // indirect
-	modernc.org/libc v1.17.1 // indirect
-	modernc.org/mathutil v1.5.0 // indirect
-	modernc.org/memory v1.2.1 // indirect
-	modernc.org/opt v0.1.3 // indirect
-	modernc.org/sqlite v1.18.1 // indirect
-	modernc.org/strutil v1.1.3 // indirect
-	modernc.org/token v1.0.1 // indirect
+	golang.org/x/text v0.3.7 // indirect
 )
 
 require (
@@ -124,4 +113,5 @@ require (
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gorm.io/driver/mysql v1.3.6
 )

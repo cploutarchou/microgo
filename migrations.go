@@ -16,6 +16,12 @@ import (
 
 func (m *MicroGo) MigrateUp(dsn string) error {
 	var path string
+	db, err := m.DB.Client.DB()
+	if err != nil {
+		log.Println("Error connecting to database")
+		return err
+
+	}
 	path = "file://" + m.RootPath + "/migrations"
 	if runtime.GOOS == "windows" {
 		path = fmt.Sprint(strings.Replace(path, "/", "\\", -1))
@@ -25,7 +31,7 @@ func (m *MicroGo) MigrateUp(dsn string) error {
 	migrations := migrate.FileMigrationSource{
 		Dir: path,
 	}
-	n, err := migrate.Exec(m.DB.Client.DB, m.DB.DatabaseType, migrations, migrate.Up)
+	n, err := migrate.Exec(db, m.DB.DatabaseType, migrations, migrate.Up)
 
 	if err != nil {
 		log.Println("Error running migration:", err)
@@ -37,6 +43,12 @@ func (m *MicroGo) MigrateUp(dsn string) error {
 
 func (m *MicroGo) MigrateDownAll(dsn string) error {
 	var path string
+	db, err := m.DB.Client.DB()
+	if err != nil {
+		log.Println("Error connecting to database")
+		return err
+
+	}
 	path = "file://" + m.RootPath + "/migrations"
 	if runtime.GOOS == "windows" {
 		path = fmt.Sprint(strings.Replace(path, "/", "\\", -1))
@@ -46,7 +58,7 @@ func (m *MicroGo) MigrateDownAll(dsn string) error {
 	migrations := migrate.FileMigrationSource{
 		Dir: path,
 	}
-	n, err := migrate.Exec(m.DB.Client.DB, m.DB.DatabaseType, migrations, migrate.Down)
+	n, err := migrate.Exec(db, m.DB.DatabaseType, migrations, migrate.Down)
 
 	if err != nil {
 		log.Println("Error running migration:", err)

@@ -25,38 +25,28 @@
 package MicroGO
 
 import (
-	"database/sql"
-
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/dialect/sqlitedialect"
-	"github.com/uptrace/bun/driver/pgdriver"
-	"github.com/uptrace/bun/driver/sqliteshim"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
-func (m *MicroGo) OpenDB(driverName, dataSourceName string) (*bun.DB, error) {
-	var sqldb *sql.DB
-	var db *bun.DB
+func (m *MicroGo) OpenDB(driverName, dataSourceName string) (*gorm.DB, error) {
 	var err error
+	var db *gorm.DB
 	switch {
 	case driverName == "postgres" || driverName == "postgresql":
-		sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dataSourceName)))
-		db = bun.NewDB(sqldb, pgdialect.New())
+		db, err = gorm.Open(postgres.Open(dataSourceName), &gorm.Config{})
 	case driverName == "mysql" || driverName == "mariadb":
-		driverName = "mysql"
-		sqldb, err = sql.Open(driverName, dataSourceName)
+		db, err = gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
 	default:
 		driverName = "sqlite"
-		sqldb, err = sql.Open(driverName, dataSourceName)
-		sql.Open(sqliteshim.ShimName, "file::memory:?cache=shared")
-		db = bun.NewDB(sqldb, sqlitedialect.New())
+		db, err = gorm.Open(sqlite.Open(m.AppName), &gorm.Config{})
+		if err != nil {
+			panic("failed to connect database")
+		}
 	}
 
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}
