@@ -27,7 +27,7 @@ func main() {
 
 	case "new":
 		if arg2 == "" {
-			gracefullyExit(errors.New("o project name specified! "))
+			gracefullyExit(errors.New("no project name specified! "))
 		}
 		createNew(arg2)
 

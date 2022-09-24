@@ -54,8 +54,7 @@ func getDSN() string {
 		}
 		return dsn
 	}
-	dsn := micro.BuildDSN()
-	return dsn
+	return "mysql://" + micro.BuildDataSourceName()
 }
 
 func help() {
