@@ -104,7 +104,7 @@ func (m *MicroGo) New(rootPath string) error {
 	m.WarningLog = warnLog
 	m.BuildLog = buildLog
 
-	// Database connection
+	// Initiate database connection
 	if os.Getenv("DATABASE_TYPE") != "" {
 		var db *sql.DB
 		switch os.Getenv("DATABASE_TYPE") {

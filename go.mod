@@ -25,6 +25,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/justinas/nosurf v1.1.1
 	github.com/kataras/blocks v0.0.6
+	github.com/mattn/go-sqlite3 v1.10.0
 	github.com/ory/dockertest/v3 v3.8.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/vanng822/go-premailer v1.20.1

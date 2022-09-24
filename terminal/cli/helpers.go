@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/fatih/color"
+	"github.com/joho/godotenv"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/fatih/color"
-	"github.com/joho/godotenv"
 )
 
 func setup(arg1, arg2 string) {
