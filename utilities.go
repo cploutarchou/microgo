@@ -14,5 +14,5 @@ func (m *MicroGo) LoadTime(start time.Time) {
 	runtimeFunc := regexp.MustCompile(`^.*\.(.*)$`)
 	name := runtimeFunc.ReplaceAllString(funcObj.Name(), "$1")
 
-	m.InfoLog.Println(fmt.Sprintf("Load Time: %s took %s", name, elapsed))
+	m.InfoLog.Printf(fmt.Sprintf("Load Time: %s took %s", name, elapsed))
 }

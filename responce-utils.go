@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 )
 
-//WriteJson : Create a JSON response.
+// WriteJson : Create a JSON response.
 func (m *MicroGo) WriteJson(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
 	out, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
@@ -41,12 +41,12 @@ func (m *MicroGo) ReadJson(w http.ResponseWriter, r *http.Request, data interfac
 	}
 	err = dec.Decode(&struct{}{})
 	if err != io.EOF {
-		return errors.New("The JSON Body need to have only single value. ")
+		return errors.New("the JSON Body need to have only single value. ")
 	}
 	return nil
 }
 
-//WriteXML : Create XML response.
+// WriteXML : Create XML response.
 func (m *MicroGo) WriteXML(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
 	out, err := xml.MarshalIndent(data, "", "")
 	if err != nil {
@@ -66,7 +66,7 @@ func (m *MicroGo) WriteXML(w http.ResponseWriter, status int, data interface{}, 
 	return nil
 }
 
-//SentFile : Send a file on response.
+// SentFile : Send a file on response.
 func (m *MicroGo) SentFile(w http.ResponseWriter, r *http.Request, fileLocation, fileName string) error {
 	_path := path.Join(fileLocation, fileName)
 	fileToServe := filepath.Clean(_path)
@@ -75,43 +75,43 @@ func (m *MicroGo) SentFile(w http.ResponseWriter, r *http.Request, fileLocation,
 	return nil
 }
 
-//Error404 : Return Not Found HTTP response .
+// Error404 : Return Not Found HTTP response .
 //
-//Status Code : 404
+// Status Code : 404
 func (m *MicroGo) Error404(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusNotFound)
 }
 
-//Error500 : Return StatusInternal Server Error HTTP response .
+// Error500 : Return StatusInternal Server Error HTTP response .
 //
-//Status Code : 500
+// Status Code : 500
 func (m *MicroGo) Error500(w http.ResponseWriter, r *http.Request) {
 
 	m.ErrorStatus(w, http.StatusInternalServerError)
 }
 
-//ErrorUnauthorized : Return Unauthorized response on request error.
+// ErrorUnauthorized : Return Unauthorized response on request error.
 //
-//Status Code : 401
+// Status Code : 401
 func (m *MicroGo) ErrorUnauthorized(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusUnauthorized)
 }
 
-//ErrorForbidden : Return StatusForbidden HTTP response.
+// ErrorForbidden : Return StatusForbidden HTTP response.
 //
-//Status Code : 403
+// Status Code : 403
 func (m *MicroGo) ErrorForbidden(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusForbidden)
 }
 
-//ErrorUnprocessable : Return Unprocessable entity HTTP response.
+// ErrorUnprocessable : Return Unprocessable entity HTTP response.
 //
-//Status Code 422.
+// Status Code 422.
 func (m *MicroGo) ErrorUnprocessable(w http.ResponseWriter, r *http.Request) {
 	m.ErrorStatus(w, http.StatusUnprocessableEntity)
 }
 
-//ErrorStatus : Construct Error HTTP response
+// ErrorStatus : Construct Error HTTP response
 func (m *MicroGo) ErrorStatus(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 
