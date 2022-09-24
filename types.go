@@ -1,6 +1,6 @@
 package MicroGO
 
-import "gorm.io/gorm"
+import "database/sql"
 
 type initPaths struct {
 	rootPath    string
@@ -22,7 +22,7 @@ type databaseConfig struct {
 
 type Database struct {
 	DatabaseType string
-	Client       *gorm.DB
+	Pool         *sql.DB
 }
 
 type redisConfig struct {
