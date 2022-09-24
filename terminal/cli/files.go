@@ -4,7 +4,6 @@ import (
 	"embed"
 	"errors"
 	"io"
-
 	"net/http"
 	"os"
 )

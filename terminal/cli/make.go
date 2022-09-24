@@ -4,13 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/gertd/go-pluralize"
 	"github.com/iancoleman/strcase"
-
-	"strings"
-	"time"
 )
 
 func makeDo(arg2, arg3 string) error {
