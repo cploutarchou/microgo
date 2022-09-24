@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"github.com/fatih/color"
+	"github.com/joho/godotenv"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/fatih/color"
-	"github.com/joho/godotenv"
 )
 
 func setup(arg1, arg2 string) {
@@ -99,7 +97,7 @@ func updateSrcFiles(path string, fi os.FileInfo, err error) error {
 		}
 		newContent := strings.Replace(string(read), "app", appURL, -1)
 		// save file
-		err = ioutil.WriteFile(path, []byte(newContent), 0)
+		err = os.WriteFile(path, []byte(newContent), 0)
 		if err != nil {
 			gracefullyExit(err)
 		}

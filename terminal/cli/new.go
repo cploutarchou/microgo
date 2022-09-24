@@ -3,14 +3,15 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/go-git/go-git/v5"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/fatih/color"
+	"github.com/go-git/go-git/v5"
 )
 
 var appURL string
@@ -20,7 +21,7 @@ func createNew(applicationName string) {
 	applicationName = strings.ToLower(applicationName)
 	appURL = applicationName
 	if applicationName == "" {
-		gracefullyExit(errors.New("No project name specified! "))
+		gracefullyExit(errors.New("no project name specified! "))
 	}
 
 	// sanitize the application name

@@ -34,10 +34,7 @@ func (v *Validation) AddError(key, message string) {
 
 func (v *Validation) Has(field string, r *http.Request) bool {
 	x := r.Form.Get(field)
-	if x == "" {
-		return false
-	}
-	return true
+	return x != ""
 }
 
 func (v *Validation) Required(r *http.Request, fields ...string) {

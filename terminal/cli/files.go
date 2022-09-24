@@ -3,7 +3,8 @@ package main
 import (
 	"embed"
 	"errors"
-	"io/ioutil"
+	"io"
+
 	"net/http"
 	"os"
 )
@@ -21,7 +22,7 @@ func copyTemplateFile(templatePath, targetFile string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		gracefullyExit(err)
@@ -41,14 +42,14 @@ func readFromRepo(fileToRead string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 	return data, nil
 }
 func copyDataToFile(data []byte, to string) error {
-	err := ioutil.WriteFile(to, data, 0644)
+	err := os.WriteFile(to, data, 0644)
 	if err != nil {
 		return err
 	}
