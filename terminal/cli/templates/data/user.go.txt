@@ -145,7 +145,7 @@ func (u *User) Insert(theUser User) (int, error) {
 	return id, nil
 }
 
-// ResetPassword resets a users's password, by id, using supplied password
+// ResetPassword resets a user's password, by id, using supplied password
 func (u *User) ResetPassword(id int, password string) error {
 	newHash, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
