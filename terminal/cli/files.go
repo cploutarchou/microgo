@@ -3,9 +3,11 @@ package main
 import (
 	"embed"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 //go:embed templates
@@ -20,14 +22,27 @@ func copyTemplateFile(templatePath, targetFile string) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 	data, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		gracefullyExit(err)
 	}
+	if strings.Contains(string(data), "$APPNAME$/data") {
 
-	err = copyDataToFile(data, targetFile)
+		appName := strings.Split(micro.RootPath, "/")
+		micro.AppName = strings.ReplaceAll(appName[len(appName)-1], "/data", "")
+		err = copyDataToFile(
+			[]byte(strings.ReplaceAll(string(data),
+				"$APPNAME$/", fmt.Sprintf("%s/", micro.AppName))),
+			targetFile,
+		)
+	} else {
+		err = copyDataToFile(data, targetFile)
+	}
+
 	if err != nil {
 		gracefullyExit(err)
 	}
@@ -40,7 +55,9 @@ func readFromRepo(fileToRead string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
