@@ -15,6 +15,7 @@ import (
 	"github.com/cploutarchou/MicroGO/cache"
 	"github.com/cploutarchou/MicroGO/mailer"
 	"github.com/cploutarchou/MicroGO/render"
+	"github.com/cploutarchou/MicroGO/requests"
 	"github.com/cploutarchou/MicroGO/session"
 	"github.com/dgraph-io/badger/v3"
 	"github.com/go-chi/chi/v5"
@@ -56,6 +57,7 @@ type MicroGo struct {
 	Scheduler     *cron.Cron
 	Mailer        mailer.Mailer
 	Server        Server
+	Requests      *requests.Requests
 }
 
 type Server struct {
