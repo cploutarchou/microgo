@@ -8,7 +8,7 @@ import (
 	"github.com/fatih/color"
 )
 
-const version = "1.0.4"
+const version = "1.0.5"
 
 var micro microGo.MicroGo
 
