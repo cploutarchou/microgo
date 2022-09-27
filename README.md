@@ -1,10 +1,10 @@
 ![logo](https://raw.githubusercontent.com/cploutarchou/MicroGO/master/docs/cover.png)
-# The Go version of Laravel Framework
+# The Go version of Django Framework
 
-In MicroGO, I take some of the most valuable features in Laravel and implement similar functionality in Go.
+In MicroGO, I take some of the most valuable features in Django and implement similar functionality in Go.
 
 Since Go is compiled and type-safe, web applications written in this language are typically much faster and far less
-error-prone than an equivalent application, Laravel, written in PHP.
+error-prone than an equivalent application, Django, written in Python.
 
 ## Requirements
 make sure you have the following dependencies:
@@ -17,7 +17,7 @@ make sure you have the following dependencies:
 
 ## Alternative ways to install MicroGO binaries
 Currently, the auto install script is only available for Linux OS fo other OS, you can manually install MicroGO binaries. See section [How to use MicroGO](#how-to-use-microgo) for more information.:
-1. Download the binaries from [GitHub Releases](https://github.com/cploutarchou/MicroGO/blob/master/install.sh)
+1. Download the binaries from [GitHub Releases](https://github.com/cploutarchou/MicroGO/releases)
 2. Or run the following command:
     ```bash
     curl -L https://raw.githubusercontent.com/cploutarchou/MicroGO/master/install.sh | bash
