@@ -17,7 +17,7 @@ make sure you have the following dependencies:
 
 ## Alternative ways to install MicroGO binaries
 Currently, the auto install script is only available for Linux OS fo other OS, you can manually install MicroGO binaries. See section [How to use MicroGO](#how-to-use-microgo) for more information.:
-1. Download the binaries from [GitHub Releases](https://github.com/cploutarchou/MicroGO/blob/master/install.sh)
+1. Download the binaries from [GitHub Releases](https://github.com/cploutarchou/MicroGO/releases)
 2. Or run the following command:
     ```bash
     curl -L https://raw.githubusercontent.com/cploutarchou/MicroGO/master/install.sh | bash
