@@ -2,6 +2,7 @@ package requests
 
 import (
 	"bytes"
+	"io"
 	"mime"
 	"net/http"
 	"strings"
@@ -23,7 +24,9 @@ func (r *Response) ContentType() (string, map[string]string, error) {
 }
 
 func (r *Response) String() (string, error) {
-	defer r.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(r.Body)
 	res := new(bytes.Buffer)
 	_, err := res.ReadFrom(r.Body)
 	if err != nil {
@@ -34,7 +37,9 @@ func (r *Response) String() (string, error) {
 }
 
 func (r *Response) Bytes() ([]byte, error) {
-	defer r.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(r.Body)
 	res := new(bytes.Buffer)
 	_, err := res.ReadFrom(r.Body)
 	if err != nil {
@@ -44,9 +49,8 @@ func (r *Response) Bytes() ([]byte, error) {
 	return bodyBytes, nil
 }
 
-
 func (r *Response) JSON() ([]byte, error) {
-	res := []byte{}
+	var res []byte
 	for _, content := range r.Header["Content-Type"] {
 		t, _, err := mime.ParseMediaType(content)
 		if err != nil {
@@ -63,7 +67,7 @@ func (r *Response) JSON() ([]byte, error) {
 }
 
 func (r *Response) XML() ([]byte, error) {
-	res := []byte{}
+	var res []byte
 	for _, content := range r.Header["Content-Type"] {
 		t, _, err := mime.ParseMediaType(content)
 		if err != nil {
