@@ -1,10 +1,10 @@
 ![logo](https://raw.githubusercontent.com/cploutarchou/MicroGO/master/docs/cover.png)
-# The Go version of Laravel Framework
+# The Go version of Django Framework
 
-In MicroGO, I take some of the most valuable features in Laravel and implement similar functionality in Go.
+In MicroGO, I take some of the most valuable features in Django and implement similar functionality in Go.
 
 Since Go is compiled and type-safe, web applications written in this language are typically much faster and far less
-error-prone than an equivalent application, Laravel, written in PHP.
+error-prone than an equivalent application, Django, written in Python.
 
 ## Requirements
 make sure you have the following dependencies:
