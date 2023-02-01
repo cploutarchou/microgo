@@ -1,6 +1,16 @@
+### Version 1.0.6
+- Fix install script for MacOS and Linux for ARM architecture
+- Fix bug for mailgun api
+- Fix bug for sendgrid api
+- Fix bug for sendinblue api
+- Update README.md
+- Update install script
 ### Version 1.0.5
 - Create Request package
 - Fix import issues
+- Fix bug in `get` method
+- Fix bug in `post` method
+- Fix bug in `put` method
 ### Version 1.0.4
 - Create install script for MacOS
 - Fix import issues

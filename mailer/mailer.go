@@ -8,7 +8,7 @@ import (
 	"github.com/vanng822/go-premailer/premailer"
 	defaultMail "github.com/xhit/go-simple-mail/v2"
 	"html/template"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -128,7 +128,7 @@ func (m *Mailer) SentSMTPMessage(msg Message) error {
 	return nil
 }
 
-//createHTMLMessage Build HTML Message using html template.
+// createHTMLMessage Build HTML Message using html template.
 func (m *Mailer) createHTMLMessage(msg Message) (string, error) {
 	renderTemplate := fmt.Sprintf("%s/%s.html.tmpl", m.Templates, msg.Template)
 	t, err := template.New("email-html").ParseFiles(renderTemplate)
@@ -144,7 +144,7 @@ func (m *Mailer) createHTMLMessage(msg Message) (string, error) {
 	return fmtMSG, nil
 }
 
-//createPlanMessage : Build HTML Message using plan template.
+// createPlanMessage : Build HTML Message using plan template.
 func (m *Mailer) createPlanMessage(msg Message) (string, error) {
 	renderTemplate := fmt.Sprintf("%s/%s.plain.tmpl", m.Templates, msg.Template)
 	t, err := template.New("email-html").ParseFiles(renderTemplate)
@@ -278,7 +278,7 @@ func (m *Mailer) addAPIAttachments(msg Message, tx *mail.Transmission) error {
 
 		for _, x := range msg.Attachments {
 			var attach mail.Attachment
-			content, err := ioutil.ReadFile(x)
+			content, err := os.ReadFile(x)
 			if err != nil {
 				return err
 			}

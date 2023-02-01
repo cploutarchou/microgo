@@ -23,11 +23,13 @@ type RedisCache struct {
 
 type Entry map[string]interface{}
 
-//Exists :  Check if the key exists
+// Exists :  Check if the key exists
 func (c *RedisCache) Exists(str string) (bool, error) {
 	key := fmt.Sprintf("%s:%s", c.Prefix, str)
 	conn := c.Connection.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	ok, err := redis.Bool(conn.Do("EXISTS", key))
 	if err != nil {
@@ -37,7 +39,7 @@ func (c *RedisCache) Exists(str string) (bool, error) {
 	return ok, nil
 }
 
-//encode : Encode a string/s  of type entry
+// encode : Encode a string/s  of type entry
 func encode(item Entry) ([]byte, error) {
 	b := bytes.Buffer{}
 	e := gob.NewEncoder(&b)
@@ -48,7 +50,7 @@ func encode(item Entry) ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-//decode : Decode  a string/s  of type entry
+// decode : Decode  a string/s  of type entry
 func decode(str string) (Entry, error) {
 	item := Entry{}
 	b := bytes.Buffer{}
@@ -61,11 +63,13 @@ func decode(str string) (Entry, error) {
 	return item, nil
 }
 
-//Get : Return Key values from Redis if it exists.
+// Get : Return Key values from Redis if it exists.
 func (c *RedisCache) Get(str string) (interface{}, error) {
 	key := fmt.Sprintf("%s:%s", c.Prefix, str)
 	conn := c.Connection.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	cacheEntry, err := redis.Bytes(conn.Do("GET", key))
 	if err != nil {
@@ -82,11 +86,13 @@ func (c *RedisCache) Get(str string) (interface{}, error) {
 	return item, nil
 }
 
-//Set : Set a key value in Redis
+// Set : Set a key value in Redis
 func (c *RedisCache) Set(str string, value interface{}, expires ...int) error {
 	key := fmt.Sprintf("%s:%s", c.Prefix, str)
 	conn := c.Connection.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	entry := Entry{}
 	entry[key] = value
@@ -110,11 +116,13 @@ func (c *RedisCache) Set(str string, value interface{}, expires ...int) error {
 	return nil
 }
 
-//Delete : Delete a key value in Redis.
+// Delete : Delete a key value in Redis.
 func (c *RedisCache) Delete(str string) error {
 	key := fmt.Sprintf("%s:%s", c.Prefix, str)
 	conn := c.Connection.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	_, err := conn.Do("DEL", key)
 	if err != nil {
@@ -124,11 +132,13 @@ func (c *RedisCache) Delete(str string) error {
 	return nil
 }
 
-//DeleteIfMatch : Delete a key values where match the with the key value
+// DeleteIfMatch : Delete a key values where match the with the key value
 func (c *RedisCache) DeleteIfMatch(str string) error {
 	key := fmt.Sprintf("%s:%s", c.Prefix, str)
 	conn := c.Connection.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	keys, err := c.getKeys(key)
 	if err != nil {
@@ -145,11 +155,13 @@ func (c *RedisCache) DeleteIfMatch(str string) error {
 	return nil
 }
 
-//Clean : Delete all entries from redis.
+// Clean : Delete all entries from redis.
 func (c *RedisCache) Clean() error {
 	key := fmt.Sprintf("%s:", c.Prefix)
 	conn := c.Connection.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	keys, err := c.getKeys(key)
 	if err != nil {
@@ -166,10 +178,12 @@ func (c *RedisCache) Clean() error {
 	return nil
 }
 
-//getKeys : Return all keys that match to the pattern.
+// getKeys : Return all keys that match to the pattern.
 func (c *RedisCache) getKeys(pattern string) ([]string, error) {
 	conn := c.Connection.Get()
-	defer conn.Close()
+	defer func(conn redis.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	iter := 0
 	var keys []string
