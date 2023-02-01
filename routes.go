@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-//routes Return a Mux object that implements the Router interface.
+// routes Return a Mux object that implements the Router interface.
 func (m *MicroGo) routes() http.Handler {
 	mux := chi.NewRouter()
 	mux.Use(middleware.RequestID)
