@@ -122,32 +122,3 @@ func makeDo(arg2, arg3 string) error {
 	}
 	return nil
 }
-
-func createAdminUser() error {
-	// ask for email
-	email, err := askForInput("Enter admin email: ")
-	if err != nil {
-		return err
-	}
-	// ask for password
-	password, err := askForInput("Enter admin password: ")
-	if err != nil {
-		return err
-	}
-	// create user
-	fmt.Println("Creating admin user...")
-	fmt.Println("Email: ", email)
-	fmt.Println(password)
-
-	return nil
-}
-
-func askForInput(question string) (string, error) {
-	fmt.Print(question)
-	var input string
-	_, err := fmt.Scanln(&input)
-	if err != nil {
-		return "", err
-	}
-	return input, nil
-}
