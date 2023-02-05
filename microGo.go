@@ -12,20 +12,21 @@ import (
 
 	"github.com/CloudyKit/jet/v6"
 	"github.com/alexedwards/scs/v2"
-	"github.com/cploutarchou/MicroGO/cache"
-	"github.com/cploutarchou/MicroGO/mailer"
-	"github.com/cploutarchou/MicroGO/render"
-	"github.com/cploutarchou/MicroGO/requests"
-	"github.com/cploutarchou/MicroGO/session"
 	"github.com/dgraph-io/badger/v3"
 	"github.com/go-chi/chi/v5"
 	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
 	"github.com/kataras/blocks"
 	"github.com/robfig/cron/v3"
+
+	"github.com/cploutarchou/MicroGO/cache"
+	"github.com/cploutarchou/MicroGO/mailer"
+	"github.com/cploutarchou/MicroGO/render"
+	"github.com/cploutarchou/MicroGO/requests"
+	"github.com/cploutarchou/MicroGO/session"
 )
 
-const version = "1.0.6"
+const version = "1.0.7"
 
 var (
 	redisCache       *cache.RedisCache
