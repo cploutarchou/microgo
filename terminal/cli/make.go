@@ -116,6 +116,8 @@ func makeDo(arg2, arg3 string) error {
 	case "admin":
 		// create admin user
 		err := createAdminUser()
+
+		
 		if err != nil {
 			gracefullyExit(err)
 		}
