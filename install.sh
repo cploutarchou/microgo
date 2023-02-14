@@ -7,7 +7,7 @@ echo "  | |\  /| |   [  |  / /'\`\\] [ \`/'\`\\ ] / .'\`\\ \ | |   ____  | |   |
 echo " _| |_\/_| |_   | |  | \\__.   | |     | \\__. | \\ \`\.___]  | \\  \`-'  / "
 echo "|_____||_____| [___] '.___.' [___]     '.__.'   \`._____.'   \`.___.'  "
 echo ""
-echo "v1.0.6"
+echo "v1.0.7"
 echo "Author: Christos Ploutarchou"
 echo "Installing MicroGO binaries..."
 userDir=$USER
@@ -30,11 +30,11 @@ spinner() {
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   if [[ $(uname -m) == "x86_64" ]]; then
-    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.6/microGo-MacOS-x86_64 &
+    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.7/microGo-MacOS-x86_64 &
     spinner $!
     mv microGo /Users/"$userDir"/go/bin/microGo
   else
-    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.6/microGo-MacOS-ARM64 &
+    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.7/microGo-MacOS-ARM64 &
     spinner $!
     mv microGo-MacOS-ARM64 /Users/"$userDir"/go/bin/microGo
   fi
@@ -58,11 +58,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
   if [[ $(uname -m) == "x86_64" ]]; then
-    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.6/microGo-Linux-x86_64 &
+    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.7/microGo-Linux-x86_64 &
     spinner $!
     mv microGo-Linux-x86_64 ~/go/bin/microGo
   else
-    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.6/microGo-Linux-ARM64 &
+    curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.7/microGo-Linux-ARM64 &
     spinner $!
     mv microGo-Linux-ARM64 ~/go/bin/microGo
   fi

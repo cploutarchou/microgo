@@ -1,4 +1,4 @@
-### Version 1.0.6
+### Version 1.0.7
 - Fix install script for MacOS and Linux for ARM architecture
 - Fix bug for mailgun api
 - Fix bug for sendgrid api

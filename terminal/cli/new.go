@@ -66,13 +66,17 @@ func createNew(applicationName string) {
 		if err != nil {
 			gracefullyExit(err)
 		}
-		defer source.Close()
+		defer func(source *os.File) {
+			_ = source.Close()
+		}(source)
 
 		destination, err := os.Create(fmt.Sprintf("./%s/Makefile", applicationName))
 		if err != nil {
 			gracefullyExit(err)
 		}
-		defer destination.Close()
+		defer func(destination *os.File) {
+			_ = destination.Close()
+		}(destination)
 
 		_, err = io.Copy(destination, source)
 		if err != nil {
@@ -83,7 +87,9 @@ func createNew(applicationName string) {
 		if err != nil {
 			gracefullyExit(err)
 		}
-		defer src.Close()
+		defer func(src *os.File) {
+			_ = src.Close()
+		}(src)
 
 		dest, err := os.Create(fmt.Sprintf("./%s/Makefile", applicationName))
 		if err != nil {
