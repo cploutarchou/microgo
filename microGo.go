@@ -356,7 +356,7 @@ func (m *MicroGo) BuildDataSourceName() string {
 		}
 		return dsn
 	case "mysql", "mariadb":
-		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 			os.Getenv("DATABASE_USER"),
 			os.Getenv("DATABASE_PASS"),
 			os.Getenv("DATABASE_HOST"),
