@@ -32,10 +32,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   if [[ $(uname -m) == "x86_64" ]]; then
     curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.7/microGo-MacOS-x86_64 &
     spinner $!
-    mv microGo /Users/"$userDir"/go/bin/microGo
+    mv microGo-MacOS-x86_64 /Users/"$userDir"/go/bin/microGo
   else
     curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.7/microGo-MacOS-ARM64 &
     spinner $!
+    # move to /usr/local/bin for global access (sudo mv microGo-MacOS-ARM64 /Users/"$userDir"/go/bin/microGo) but the name of the binary is microGo
     mv microGo-MacOS-ARM64 /Users/"$userDir"/go/bin/microGo
   fi
 

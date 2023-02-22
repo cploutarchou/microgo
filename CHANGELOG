@@ -3,6 +3,7 @@
 - Fix bug for mailgun api
 - Fix bug for sendgrid api
 - Fix bug for sendinblue api
+- Fix bug for mysql and mariadb database for timestamp fields
 - Update README.md
 - Update install script
 ### Version 1.0.5
