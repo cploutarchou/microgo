@@ -36,7 +36,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   else
     curl -LJO https://github.com/cploutarchou/MicroGO/releases/download/v1.0.7/microGo-MacOS-ARM64 &
     spinner $!
-    # move to /usr/local/bin for global access (sudo mv microGo-MacOS-ARM64 /Users/"$userDir"/go/bin/microGo) but the name of the binary is microGo
     mv microGo-MacOS-ARM64 /Users/"$userDir"/go/bin/microGo
   fi
 
