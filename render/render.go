@@ -60,7 +60,7 @@ func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, l
 	case "jet":
 		return r.JetPage(writer, request, view, variables, data)
 	case "blocks":
-		return r.BlocksPage(writer, request, view, layout, nil, data.(map[string]interface{}))
+		return r.BlocksPage(writer, request, view, layout, data.(map[string]interface{}))
 
 	default:
 	}
@@ -69,7 +69,7 @@ func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, l
 
 // GoPage The default go template engine renderer function.
 func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view string, data interface{}) error {
-	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/views/%s.page.tmpl", r.RootPath, view))
+	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/views/%s.tmpl", r.RootPath, view))
 	if err != nil {
 		return err
 	}
@@ -114,7 +114,7 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 }
 
 // BlocksPage The Blocks' engine template renderer function.
-func (r *Render) BlocksPage(writer http.ResponseWriter, request *http.Request, view, layout string, variables interface{}, data map[string]interface{}) error {
+func (r *Render) BlocksPage(writer http.ResponseWriter, request *http.Request, view, layout string, data map[string]interface{}) error {
 	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 	r.BlocksViews = blocks.New("./views").
 		Reload(true).
