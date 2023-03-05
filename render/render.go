@@ -53,14 +53,14 @@ func (r *Render) DefaultData(templateData *TemplateData, request *http.Request) 
 }
 
 // Page The page render function. You can use it to render pages using go or jet templates.
-func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, layout string, variables, data interface{}) error {
+func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, layout string, variables interface{}, data map[string]interface{}) error {
 	switch strings.ToLower(r.Renderer) {
 	case "go":
 		return r.GoPage(writer, request, view, data)
 	case "jet":
 		return r.JetPage(writer, request, view, variables, data)
 	case "blocks":
-		return r.BlocksPage(writer, request, view, layout, data.(map[string]interface{}))
+		return r.BlocksPage(writer, request, view, layout, data)
 
 	default:
 	}
@@ -68,7 +68,7 @@ func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, l
 }
 
 // GoPage The default go template engine renderer function.
-func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view string, data interface{}) error {
+func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view string, data map[string]interface{}) error {
 	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/views/%s.tmpl", r.RootPath, view))
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view 
 
 	td := &TemplateData{}
 	if data != nil {
-		td = data.(*TemplateData)
+		td.Data = data
 	}
 	td = r.DefaultData(td, request)
 	err = tmpl.Execute(writer, &td)
@@ -87,7 +87,7 @@ func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view 
 }
 
 // JetPage The jet engine template renderer function.
-func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view string, variables, data interface{}) error {
+func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view string, variables interface{}, data map[string]interface{}) error {
 	var vars jet.VarMap
 	if variables == nil {
 		vars = make(jet.VarMap)
@@ -97,7 +97,7 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 	td := &TemplateData{}
 
 	if data != nil {
-		td = data.(*TemplateData)
+		td.Data = data
 	}
 
 	td = r.DefaultData(td, request)
