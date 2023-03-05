@@ -26,7 +26,7 @@ import (
 	"github.com/cploutarchou/MicroGO/session"
 )
 
-const version = "1.0.7"
+const version = "1.0.7a"
 
 var (
 	redisCache       *cache.RedisCache
