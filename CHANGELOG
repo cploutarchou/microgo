@@ -1,3 +1,5 @@
+### Version 1.0.9
+- Fix bug for go templates to render data
 ### Version 1.0.8
 - Remove .page prefix for go templates
 - Update Dependencies

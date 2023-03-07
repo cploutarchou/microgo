@@ -30,7 +30,7 @@ type TemplateData struct {
 	IntMap          map[string]int
 	StringMap       map[string]string
 	FloatMap        map[string]float64
-	Data            map[string]interface{}
+	Data            any
 	CSRFToken       string
 	Port            string
 	ServerName      string
@@ -44,6 +44,8 @@ func (r *Render) DefaultData(templateData *TemplateData, request *http.Request) 
 	templateData.ServerName = r.ServerName
 	templateData.Port = r.Port
 	templateData.CSRFToken = nosurf.Token(request)
+	fmt.Println("CSRFToken: ", templateData.CSRFToken)
+	fmt.Println("Session: ", r.Session.Exists(request.Context(), "userID"))
 	if r.Session.Exists(request.Context(), "userID") {
 		templateData.IsAuthenticated = true
 	}
@@ -53,14 +55,14 @@ func (r *Render) DefaultData(templateData *TemplateData, request *http.Request) 
 }
 
 // Page The page render function. You can use it to render pages using go or jet templates.
-func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, layout string, variables, data interface{}) error {
+func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, layout string, variables interface{}, data any) error {
 	switch strings.ToLower(r.Renderer) {
 	case "go":
 		return r.GoPage(writer, request, view, data)
 	case "jet":
 		return r.JetPage(writer, request, view, variables, data)
 	case "blocks":
-		return r.BlocksPage(writer, request, view, layout, data.(map[string]interface{}))
+		return r.BlocksPage(writer, request, view, layout, data)
 
 	default:
 	}
@@ -68,18 +70,18 @@ func (r *Render) Page(writer http.ResponseWriter, request *http.Request, view, l
 }
 
 // GoPage The default go template engine renderer function.
-func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view string, data interface{}) error {
-	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/views/%s.tmpl", r.RootPath, view))
+func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view string, data any) error {
+	tmpl, err := template.ParseFiles(fmt.Sprintf("%s/views/%s.html", r.RootPath, view))
 	if err != nil {
 		return err
 	}
 
 	td := &TemplateData{}
 	if data != nil {
-		td = data.(*TemplateData)
+		td.Data = data
 	}
 	td = r.DefaultData(td, request)
-	err = tmpl.Execute(writer, &td)
+	err = tmpl.Execute(writer, td)
 	if err != nil {
 		return err
 	}
@@ -87,7 +89,7 @@ func (r *Render) GoPage(writer http.ResponseWriter, request *http.Request, view 
 }
 
 // JetPage The jet engine template renderer function.
-func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view string, variables, data interface{}) error {
+func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view string, variables interface{}, data any) error {
 	var vars jet.VarMap
 	if variables == nil {
 		vars = make(jet.VarMap)
@@ -97,7 +99,7 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 	td := &TemplateData{}
 
 	if data != nil {
-		td = data.(*TemplateData)
+		td.Data = data
 	}
 
 	td = r.DefaultData(td, request)
@@ -114,7 +116,7 @@ func (r *Render) JetPage(writer http.ResponseWriter, request *http.Request, view
 }
 
 // BlocksPage The Blocks' engine template renderer function.
-func (r *Render) BlocksPage(writer http.ResponseWriter, request *http.Request, view, layout string, data map[string]interface{}) error {
+func (r *Render) BlocksPage(writer http.ResponseWriter, request *http.Request, view, layout string, data any) error {
 	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 	r.BlocksViews = blocks.New("./views").
 		Reload(true).
@@ -132,10 +134,10 @@ func (r *Render) BlocksPage(writer http.ResponseWriter, request *http.Request, v
 
 	if data != nil {
 
-		data["data"] = r.DefaultData(td, request)
+		td.Data = data
+		td = r.DefaultData(td, request)
 	}
-
-	err = r.BlocksViews.ExecuteTemplate(writer, view, layout, data)
+	err = r.BlocksViews.ExecuteTemplate(writer, view, layout, td)
 	if err != nil {
 		return err
 	}
